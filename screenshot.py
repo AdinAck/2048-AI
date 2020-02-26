@@ -37,10 +37,12 @@ while True:
         rightNum = i - 1
         break
 
-x1 = 685
-y1 = 360
-x2 = 1220
-y2 = 895
+size = pyautogui.size()
+
+x1 = size[0]/2-275
+y1 = size[1]/2-180
+x2 = size[0]-700
+y2 = size[1]-185
 
 coords = [x1,y1,x2-x1,y2-y1]
 

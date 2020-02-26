@@ -7,10 +7,12 @@ import tkinter as tk
 import time
 import random
 
-x1 = 685
-y1 = 360
-x2 = 1220
-y2 = 895
+size = pyautogui.size()
+
+x1 = size[0]/2-275
+y1 = size[1]/2-180
+x2 = size[0]-700
+y2 = size[1]-185
 
 coords = [x1,y1,x2-x1,y2-y1]
 
@@ -21,7 +23,7 @@ run = True
 while run:
     im = pyscreenshot.grab()
     im = im.crop((x1,y1,x2,y2))
-    time.sleep(2)
+    time.sleep(.5)
     predict = fromModel.getPrediction(im)[0]
     if np.all(predict) != np.all(previous):
         if max(predict) == predict[0]:
