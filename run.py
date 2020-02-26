@@ -40,12 +40,11 @@ def stuckAction(predict):
         predict[2] = 0
     if big == predict[3]:
         predict[3] = 0
-    action()
 
 yeet = input("Press enter to start...\n")
 previous = 0
 stuck = 0
-wait = .1
+wait = 0
 time.sleep(1)
 run = True
 while run:
@@ -58,12 +57,15 @@ while run:
         stuck += 1
         if stuck == 1:
             stuckAction(predict)
+            action()
         if stuck == 2:
             stuckAction(predict)
             stuckAction(predict)
+            action()
         if stuck == 3:
             stuckAction(predict)
             stuckAction(predict)
             stuckAction(predict)
+            action()
             stuck = 0
     previous = predict
