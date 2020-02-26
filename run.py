@@ -23,7 +23,7 @@ run = True
 while run:
     im = pyscreenshot.grab()
     im = im.crop((x1,y1,x2,y2))
-    time.sleep(.5)
+    time.sleep(.1)
     predict = fromModel.getPrediction(im)[0]
     if np.all(predict) != np.all(previous):
         if max(predict) == predict[0]:
