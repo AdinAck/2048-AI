@@ -1,41 +1,32 @@
 import os.path
 import pyautogui
-import tkinter as tk
+import pyscreenshot
+from pynput import keyboard
+import time
 
-root= tk.Tk()
+i = 1
+while os.path.exists("up/up"+str(i)+".png"):
+    i += 1
+print(i-1)
+upNum = i
 
 i = 1
-while True:
-    if os.path.exists("up/up"+str(i)+".png"):
-        i += 1
-    else:
-        print(i-1)
-        upNum = i
-        break
+while os.path.exists("down/down"+str(i)+".png"):
+    i += 1
+print(i-1)
+downNum = i - 1
+
 i = 1
-while True:
-    if os.path.exists("down/down"+str(i)+".png"):
-        i += 1
-    else:
-        print(i-1)
-        downNum = i - 1
-        break
+while os.path.exists("left/left"+str(i)+".png"):
+    i += 1
+print(i-1)
+leftNum = i - 1
+
 i = 1
-while True:
-    if os.path.exists("left/left"+str(i)+".png"):
-        i += 1
-    else:
-        print(i-1)
-        leftNum = i - 1
-        break
-i = 1
-while True:
-    if os.path.exists("right/right"+str(i)+".png"):
-        i += 1
-    else:
-        print(i-1)
-        rightNum = i - 1
-        break
+while os.path.exists("right/right"+str(i)+".png"):
+    i += 1
+print(i-1)
+rightNum = i - 1
 
 size = pyautogui.size()
 
@@ -46,47 +37,53 @@ y2 = size[1]-185
 
 coords = [x1,y1,x2-x1,y2-y1]
 
-canvas1 = tk.Canvas(root, width = 300, height = 300)
-canvas1.pack()
+yeet = input("Press enter to start...\n")
 
-def upClk():
+im = pyscreenshot.grab()
+im = im.crop((x1,y1,x2,y2))
+
+def up():
     global upNum
     upNum += 1
-    myScreenshot = pyautogui.screenshot(region=coords)
-    myScreenshot.save("up/up"+str(upNum)+".png")
+    im.save("up/up"+str(upNum)+".png")
 
-def downClk():
+def down():
     global downNum
     downNum += 1
-    myScreenshot = pyautogui.screenshot(region=coords)
-    myScreenshot.save("down/down"+str(downNum)+".png")
+    im.save("down/down"+str(downNum)+".png")
 
-def leftClk():
+def left():
     global leftNum
     leftNum += 1
-    myScreenshot = pyautogui.screenshot(region=coords)
-    myScreenshot.save("left/left"+str(leftNum)+".png")
+    im.save("left/left"+str(leftNum)+".png")
 
-def rightClk():
+def right():
     global rightNum
     rightNum += 1
-    myScreenshot = pyautogui.screenshot(region=coords)
-    myScreenshot.save("right/right"+str(rightNum)+".png")
+    im.save("right/right"+str(rightNum)+".png")
 
-def testClk():
-    myScreenshot = pyautogui.screenshot(region=coords)
-    myScreenshot.save("test.png")
+def on_press(key):
+    global im
+    if "up" in str(key):
+        up()
+    if "down" in str(key):
+        down()
+    if "left" in str(key):
+        left()
+    if "right" in str(key):
+        right()
+    try:
+        print('{0} pressed'.format(key.char))
+    except AttributeError:
+        print('{0} pressed'.format(key))
+    time.sleep(.1)
+    im = pyscreenshot.grab()
+    im = im.crop((x1,y1,x2,y2))
 
-up = tk.Button(text='Up', command=upClk, bg='green',fg='white',font= 10)
-down = tk.Button(text='Down', command=downClk, bg='green',fg='white',font= 10)
-left = tk.Button(text='Left', command=leftClk, bg='green',fg='white',font= 10)
-right = tk.Button(text='Right', command=rightClk, bg='green',fg='white',font= 10)
-test = tk.Button(text='Test', command=testClk, bg='green',fg='white',font= 10)
+# Collect events until released
+with keyboard.Listener(on_press=on_press) as listener:
+    listener.join()
 
-canvas1.create_window(150, 50, window=up)
-canvas1.create_window(150, 100, window=down)
-canvas1.create_window(150, 150, window=left)
-canvas1.create_window(150, 200, window=right)
-canvas1.create_window(150, 250, window=test)
-
-root.mainloop()
+# ...or, in a non-blocking fashion:
+listener = keyboard.Listener(on_press=on_press)
+listener.start()
