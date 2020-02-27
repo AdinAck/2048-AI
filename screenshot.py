@@ -8,7 +8,7 @@ i = 1
 while os.path.exists("up/up"+str(i)+".png"):
     i += 1
 print(i-1)
-upNum = i
+upNum = i - 1
 
 i = 1
 while os.path.exists("down/down"+str(i)+".png"):
@@ -76,7 +76,7 @@ def on_press(key):
         print('{0} pressed'.format(key.char))
     except AttributeError:
         print('{0} pressed'.format(key))
-    time.sleep(.1)
+    time.sleep(.2)
     im = pyscreenshot.grab()
     im = im.crop((x1,y1,x2,y2))
 

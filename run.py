@@ -44,7 +44,7 @@ def stuckAction(predict):
 yeet = input("Press enter to start...\n")
 previous = 0
 stuck = 0
-wait = 0
+wait = .25
 time.sleep(1)
 run = True
 while run:
