@@ -72,7 +72,6 @@ def move(board, direction):
                         board[i+1,j] = board[i+1,j]*2
                         board[i,j] = 0
                         mergedList.append([i+1,j])
-                        print("Moved {0} into the mergedList".format([i+1,j]))
                 if i == 1:
                     for p in range(2):
                         if board[i+p+1,j] == 0:
@@ -83,7 +82,6 @@ def move(board, direction):
                         board[i+p+1,j] = board[i+p+1,j]*2
                         board[i+p,j] = 0
                         mergedList.append([i+p+1,j])
-                        print("Moved {0} into the mergedList".format([i+1,j]))
                 if i == 0:
                     for p in range(3):
                         if board[i+p+1,j] == 0:
@@ -94,7 +92,6 @@ def move(board, direction):
                         board[i+p+1,j] = board[i+p+1,j]*2
                         board[i+p,j] = 0
                         mergedList.append([i+p+1,j])
-                        print("Moved {0} into the mergedList".format([i+1,j]))
 
     if not np.array_equal(preBoard,board):
         genRandomBlock(board)
