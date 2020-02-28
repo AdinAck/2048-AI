@@ -2,7 +2,7 @@ import numpy as np
 import pyautogui
 import pyscreenshot
 from PIL import Image
-import fromModel
+import tesnsorflowStuff
 import tkinter as tk
 import time
 
@@ -50,7 +50,7 @@ run = True
 while run:
     im = pyscreenshot.grab()
     im = im.crop((x1,y1,x2,y2))
-    predict = fromModel.getPrediction(im)[0]
+    predict = tensorflowStuff.getPrediction(im)[0]
     if np.all(predict) != np.all(previous):
         action()
     else:
