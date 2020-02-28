@@ -4,7 +4,7 @@ from pynput import keyboard
 
 # board = np.zeros((4,4))
 board = np.array([[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]])
-board = np.array([[0,0,0,0],[0,0,0,0],[2,2,2,2],[2,2,2,2]])
+# board = np.array([[0,0,0,0],[0,0,0,0],[2,2,2,2],[2,2,2,2]])
 
 
 
@@ -21,8 +21,8 @@ def genRandomBlock(board):
     except ValueError:
         print("This should not happen, attempted to place random block in board with no zeros?")
 
-# genRandomBlock(board)
-# genRandomBlock(board)
+genRandomBlock(board)
+genRandomBlock(board)
 
 print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
 print(board)
@@ -95,11 +95,10 @@ def move(board, direction):
                         board[i+p,j] = 0
                         mergedList.append([i+p+1,j])
                         print("Moved {0} into the mergedList".format([i+1,j]))
-            print(board)
 
     if not np.array_equal(preBoard,board):
         genRandomBlock(board)
-        print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+        print("\n\n\n")
         print(board)
 
 # Key listening
