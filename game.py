@@ -4,6 +4,7 @@ from pynput import keyboard
 
 # board = np.zeros((4,4))
 board = np.array([[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]])
+board = np.array([[0,0,0,0],[0,0,0,0],[2,2,2,2],[2,2,2,2]])
 
 
 
@@ -20,8 +21,8 @@ def genRandomBlock(board):
     except ValueError:
         print("This should not happen, attempted to place random block in board with no zeros?")
 
-genRandomBlock(board)
-genRandomBlock(board)
+# genRandomBlock(board)
+# genRandomBlock(board)
 
 print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
 print(board)
@@ -36,7 +37,7 @@ def move(board, direction):
                     if board[i-1,j] == 0:
                         board[i-1,j] = board[i,j]
                         board[i,j] = 0
-                    if board[i,j] == board[i-1,j] and [i-1,j] not in mergedList:
+                    if board[i,j] == board[i-1,j] and board[i,j] != 0 and [i-1,j] not in mergedList:
                         board[i-1,j] = board[i-1,j]*2
                         board[i,j] = 0
                         mergedList.append([i-1,j])
@@ -46,7 +47,7 @@ def move(board, direction):
                             board[i-p-1,j] = board[i-p,j]
                             board[i-p,j] = 0
                         else: break
-                    if board[i-p,j] == board[i-p-1,j] and [i-p-1,j] not in mergedList:
+                    if board[i-p,j] == board[i-p-1,j] and board[i-p,j] != 0 and [i-p-1,j] not in mergedList:
                         board[i-p-1,j] = board[i-p-1,j]*2
                         board[i-p,j] = 0
                         mergedList.append([i-p-1,j])
@@ -56,7 +57,7 @@ def move(board, direction):
                             board[i-p-1,j] = board[i-p,j]
                             board[i-p,j] = 0
                         else: break
-                    if board[i-p,j] == board[i-p-1,j] and [i-p-1,j] not in mergedList:
+                    if board[i-p,j] == board[i-p-1,j] and board[i-p,j] != 0 and [i-p-1,j] not in mergedList:
                         board[i-p-1,j] = board[i-p-1,j]*2
                         board[i-p,j] = 0
                         mergedList.append([i-p-1,j])
@@ -67,30 +68,34 @@ def move(board, direction):
                     if board[i+1,j] == 0:
                         board[i+1,j] = board[i,j]
                         board[i,j] = 0
-                    if board[i,j] == board[i+1,j] and [i+1,j] not in mergedList:
+                    if board[i,j] == board[i+1,j] and board[i,j] != 0 and [i+1,j] not in mergedList:
                         board[i+1,j] = board[i+1,j]*2
                         board[i,j] = 0
                         mergedList.append([i+1,j])
+                        print("Moved {0} into the mergedList".format([i+1,j]))
                 if i == 1:
                     for p in range(2):
                         if board[i+p+1,j] == 0:
                             board[i+p+1,j] = board[i+p,j]
                             board[i+p,j] = 0
                         else: break
-                    if board[i+p,j] == board[i+p+1,j] and [i+p+1,j] not in mergedList:
+                    if board[i+p,j] == board[i+p+1,j] and board[i+p,j] != 0 and [i+p+1,j] not in mergedList:
                         board[i+p+1,j] = board[i+p+1,j]*2
                         board[i+p,j] = 0
                         mergedList.append([i+p+1,j])
+                        print("Moved {0} into the mergedList".format([i+1,j]))
                 if i == 0:
                     for p in range(3):
                         if board[i+p+1,j] == 0:
                             board[i+p+1,j] = board[i+p,j]
                             board[i+p,j] = 0
                         else: break
-                    if board[i+p,j] == board[i+p+1,j] and [i+p+1,j] not in mergedList:
+                    if board[i+p,j] == board[i+p+1,j] and board[i+p,j] != 0 and [i+p+1,j] not in mergedList:
                         board[i+p+1,j] = board[i+p+1,j]*2
                         board[i+p,j] = 0
                         mergedList.append([i+p+1,j])
+                        print("Moved {0} into the mergedList".format([i+1,j]))
+            print(board)
 
     if not np.array_equal(preBoard,board):
         genRandomBlock(board)
