@@ -4,10 +4,10 @@ import random
 import game as g
 # np.set_printoptions(threshold=sys.maxsize)
 
-c = 100 # Generation size
-r = 100 # Number of generations
-hWidth = 16
-hDepth = 8
+c = 500 # Generation size
+r = 10000 # Epochs
+hWidth = 8
+hDepth = 1
 
 scores = np.array([],int)
 wbList = np.array([])
@@ -69,7 +69,7 @@ for m in range(c):
         print("====================")
         print("Final Score: {0}".format(game.score))
         print("Number of moves: {0}".format(game.moves))
-    scores = np.append(scores, game.score/(game.moves+1))
+    scores = np.append(scores, game.score)
     wbList = np.append(wbList, [w,b])
 
 wbList.shape = m+1,2,np.size(w)
@@ -95,12 +95,12 @@ for p in range(r):
             for j in range(np.size(w,0)):
                 for k in range(np.size(w,1)):
                     for l in range(np.size(w,2)):
-                        w[j,k,l] += w[j,k,l]*random.randint(-10,10)/1000
+                        w[j,k,l] += w[j,k,l]*random.randint(-1,1)*.05
 
             for j in range(np.size(b,0)):
                 for k in range(np.size(b,1)):
                     for l in range(np.size(b,2)):
-                        b[j,k,l] += b[j,k,l]*random.randint(-10,10)/1000
+                        b[j,k,l] += b[j,k,l]*random.randint(-1,1)*.05
 
             wbList2 = np.append(wbList2, [w,b])
 
@@ -141,7 +141,7 @@ for p in range(r):
             print("====================")
             print("Final Score: {0}".format(game.score))
             print("Number of moves: {0}".format(game.moves))
-        scores = np.append(scores, game.score/(game.moves+1))
+        scores = np.append(scores, game.score)
         # print(game.score,game.moves)
         wbList = np.append(wbList, [w,b])
 
@@ -154,4 +154,4 @@ for p in range(r):
     print("====================")
     f.write(str(p+1)+"\t"+str(np.sort(scores)[0])+"\t"+str(np.sort(scores)[-1])+"\t"+str(np.average(scores))+"\n")
 f.close()
-# print("\n\nFinal weights and biases: \n",w,"\n",b)
+print("\n\nFinal weights and biases: \n",w,"\n",b)
