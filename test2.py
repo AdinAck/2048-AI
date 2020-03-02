@@ -15,7 +15,7 @@ def sigmoid(x):
 def getOutput(game,w):
     a = game.board
     for i in range(hDepth+1):
-        a = np.maximum(0, np.dot(a.flatten(),w[i]))
+        a = sigmoid(np.dot(a.flatten(),w[i]))
 
     a.shape = 4,4
     return sigmoid(np.sum(a,0))
@@ -55,7 +55,7 @@ def train(epochSize, iterations, threshold, randomFactor):
             scores = np.append(scores, game.score)
             if j < 1:
                 wList = np.append(wList, w)
-        print("Generation: ",j)
+        print("Epoch: ",j)
         print("Worst: ",np.sort(scores)[0])
         print("Best: ",np.sort(scores)[-1])
         print("Average: ",np.average(scores))
@@ -77,4 +77,4 @@ def improve(epochSize, wList, scores, threshold,randomFactor):
         if scores[i] != -1:
                 wList[i] = wList[int(bestList[i])] + wList[int(bestList[i])]*randomFactor*np.random.random((hDepth+1,hWidth**2,hWidth**2)) - randomFactor/2
     return wList
-train(400,100,5,2)
+train(1000,10000,5,2)
