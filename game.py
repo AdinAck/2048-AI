@@ -3,19 +3,13 @@ import random
 
 class Game:
     def __init__(self):
-        self.board = np.array([[0,0,0,0],
-                          [0,0,0,0],
-                          [0,0,0,0],
-                          [0,0,0,0]])
+        self.board = np.zeros((4,4),int)
         self.score = 0
         self.gameEnd = False
         self.moves = 0
         self.verbose = False
         self.genRandomBlock()
         self.genRandomBlock()
-
-        if self.verbose:
-            print(self.board)
 
     def genRandomBlock(self):
         zeroList = np.array([])

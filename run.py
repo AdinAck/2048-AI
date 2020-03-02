@@ -2,7 +2,7 @@ import numpy as np
 import pyautogui
 import pyscreenshot
 from PIL import Image
-import tesnsorflowStuff
+import tensorflowStuff
 import tkinter as tk
 import time
 
