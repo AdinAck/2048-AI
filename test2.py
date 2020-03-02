@@ -15,12 +15,12 @@ def sigmoid(x):
 def getOutput(game,w):
     a = game.board
     for i in range(hDepth+1):
-        a = sigmoid(np.dot(a.flatten(),w[i]))
+        a = np.maximum(0, np.dot(a.flatten(),w[i]))
 
     a.shape = 4,4
     return sigmoid(np.sum(a,0))
 
-def train(epochSize, iterations):
+def train(epochSize, iterations, threshold, randomFactor):
     p = 0
     while os.path.exists("log"+str(p)+".txt"):
         p += 1
