@@ -34,18 +34,30 @@ def train(epochSize, iterations):
             if j >= 1:
                 w = wList[i]
             while not game.gameEnd:
-                if np.max(o) == o[0]:
-                    if not game.move(0):
-                        break
-                if np.max(o) == o[1]:
-                    if not game.move(1):
-                        break
-                if np.max(o) == o[2]:
-                    if not game.move(2):
-                        break
-                if np.max(o) == o[3]:
-                    if not game.move(3):
-                        break
+
+                order = np.zeros(4)
+                for k in range(len(order)):
+                    if np.max(o) == o[0]:
+                        order[k] = 0
+                        o[0] = 0
+                    elif np.max(o) == o[1]:
+                        order[k] = 1
+                        o[1] = 0
+                    elif np.max(o) == o[2]:
+                        order[k] = 2
+                        o[2] = 0
+                    elif np.max(o) == o[3]:
+                        order[k] = 3
+                        o[3] = 0
+
+
+                if not game.move(order[0]):
+                    if not game.move(order[1]):
+                        if not game.move(order[2]):
+                            game.move(order[3])
+
+
+
                 o = getOutput(game,w)
             scores = np.append(scores, game.score)
             if j < 1:
@@ -72,4 +84,4 @@ def improve(epochSize, wList, scores, threshold):
         if scores[i] != -1:
                 wList[i] = wList[int(bestList[i])] + wList[int(bestList[i])]*2*np.random.random((hDepth+1,hWidth**2,hWidth**2)) - 1
     return wList
-train(1000,10000)
+train(100,100)
