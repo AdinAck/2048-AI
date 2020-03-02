@@ -20,16 +20,11 @@ def getOutput(game,w):
     a.shape = 4,4
     return sigmoid(np.sum(a,0))
 
-<<<<<<< HEAD
 def train(epochSize, iterations):
     p = 0
     while os.path.exists("log"+str(p)+".txt"):
         p += 1
     f = open("log"+str(p)+".txt", 'w')
-=======
-def train(epochSize, iterations,threshold,randomFactor):
-    f = open("log4.txt", 'w')
->>>>>>> b2a4edf357432a928a18318986007480a65f4cb4
     w = np.ones((hDepth+1,hWidth**2,hWidth**2))
     wList = np.array([])
     for j in range(iterations):
