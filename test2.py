@@ -77,4 +77,4 @@ def improve(epochSize, wList, scores, threshold,randomFactor):
         if scores[i] != -1:
                 wList[i] = wList[int(bestList[i])] + wList[int(bestList[i])]*randomFactor*np.random.random((hDepth+1,hWidth**2,hWidth**2)) - randomFactor/2
     return wList
-train(400,100,5,1.5)
+train(400,100,5,2)
