@@ -4,6 +4,7 @@ import game as g
 hWidth = 4
 hDepth = 0
 
+
 def sigmoid(x):
     return 1/(1+np.exp(-x))
 
@@ -18,7 +19,7 @@ def getOutput(game,w):
     a.shape = 4,4
     return sigmoid(np.sum(a,0))
 
-def train(epochSize, iterations):
+def train(epochSize, iterations,threshold,randomFactor):
     f = open("log4.txt", 'w')
     w = np.ones((hDepth+1,hWidth**2,hWidth**2))
     wList = np.array([])
@@ -56,12 +57,12 @@ def train(epochSize, iterations):
         print("Average: ",np.average(scores))
         print("====================")
         f.write(str(j)+"\t"+str(np.sort(scores)[0])+"\t"+str(np.sort(scores)[-1])+"\t"+str(np.average(scores))+"\n")
-        wList = improve(epochSize, wList, scores, 10)
+        wList = improve(epochSize, wList, scores, threshold,randomFactor)
     f.close()
     # print("\n\nFinal weights:\n",wList)
     np.save("model.npy", wList)
 
-def improve(epochSize, wList, scores, threshold):
+def improve(epochSize, wList, scores, threshold,randomFactor):
     wList.shape = epochSize,hDepth+1,hWidth**2,hWidth**2
     bestList = np.array([])
     for i in range(int(epochSize*(threshold/100))):
@@ -70,6 +71,6 @@ def improve(epochSize, wList, scores, threshold):
     bestList = np.repeat(bestList, 100//threshold)
     for i in range(epochSize):
         if scores[i] != -1:
-                wList[i] = wList[int(bestList[i])] + wList[int(bestList[i])]*2*np.random.random((hDepth+1,hWidth**2,hWidth**2)) - 1
+                wList[i] = wList[int(bestList[i])] + wList[int(bestList[i])]*randomFactor*np.random.random((hDepth+1,hWidth**2,hWidth**2)) - randomFactor/2
     return wList
-train(1000,10000)
+train(400,100,5,1.5)
