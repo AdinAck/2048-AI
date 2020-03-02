@@ -15,12 +15,12 @@ def sigmoid(x):
 def getOutput(game,w):
     a = game.board
     for i in range(hDepth+1):
-        a = sigmoid(np.dot(a.flatten(),w[i]))
+        a = np.maximum(0, np.dot(a.flatten(),w[i]))
 
     a.shape = 4,4
     return sigmoid(np.sum(a,0))
 
-def train(epochSize, iterations):
+def train(epochSize, iterations, threshold, randomFactor):
     p = 0
     while os.path.exists("log"+str(p)+".txt"):
         p += 1
@@ -61,7 +61,7 @@ def train(epochSize, iterations):
         print("Average: ",np.average(scores))
         print("====================")
         f.write(str(j)+"\t"+str(np.sort(scores)[0])+"\t"+str(np.sort(scores)[-1])+"\t"+str(np.average(scores))+"\n")
-        wList = improve(epochSize, wList, scores, threshold,randomFactor)
+        wList = improve(epochSize, wList, scores, threshold, randomFactor)
     f.close()
     # print("\n\nFinal weights:\n",wList)
     np.save("model"+str(p)+".npy", wList)
