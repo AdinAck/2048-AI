@@ -21,10 +21,10 @@ def getOutput(game,w):
     a.shape = 4,4
     return sigmoid(np.sum(a,0))
 
-def train(genSize, iterations, threshold, mutationFactor, hDepth=None, model=None, outputModel=None, outputLog=None):
-    if outputLog == None:
+def train(genSize, iterations, threshold, mutationFactor, hDepth=None, model=None, outputModel=False, outputLog=False):
+    if outputLog:
         f = open("log.txt", 'w')
-    else:
+    elif outputLog != False:
         f = open(outputLog, 'w')
     if model != None:
         wList = np.load(model)
@@ -74,20 +74,27 @@ def train(genSize, iterations, threshold, mutationFactor, hDepth=None, model=Non
             print("Best: ",np.sort(scores)[-1])
             print("Average: ",np.average(scores))
             print("====================")
-            f.write(str(j)+"\t"+str(np.sort(scores)[0])+"\t"+str(np.sort(scores)[-1])+"\t"+str(np.average(scores))+"\n")
+            if outputLog != False:
+                f.write(str(j)+"\t"+str(np.sort(scores)[0])+"\t"+str(np.sort(scores)[-1])+"\t"+str(np.average(scores))+"\n")
             wList = improve(genSize, wList, hDepth, scores, threshold, mutationFactor)
     except KeyboardInterrupt:
         print("\nInterrupted, closing log and saving model...\n")
     print("Session complete from model \"{0}\".\nHidden layers: {1}\nGeneration size: {2}\nIterations: {3}\
-    \nFitness threshold: {4}\nMutationFactor\n".format(model,np.size(w,0)-1,genSize,j,threshold,mutationFactor))
-    f.close()
-    if outputModel == None:
+    \nFitness threshold: {4}\nMutationFactor: {5}\n".format(model,np.size(w,0)-1,genSize,j,threshold,mutationFactor))
+    if outputModel:
         outputModel = model
-    np.save(output, wList)
+    elif not outputModel:
+        outputModel = None
+    if outputLog != False:
+        f.close()
+        np.save(outputModel, wList)
     print("Log saved as: {0}\nModel saved as: {1}".format(outputLog,outputModel))
 
 def improve(genSize, wList, hDepth, scores, threshold, mutationFactor):
-    wList.shape = genSize,hDepth+1,hWidth**2,hWidth**2
+    try:
+        wList.shape = genSize,hDepth+1,hWidth**2,hWidth**2
+    except ValueError:
+        raise Exception("Model generation size does not match current generation size.")
     bestList = np.array([])
     for i in range(int(genSize*(threshold/100))):
         scores[[np.argmax(scores)][0]] = -1
