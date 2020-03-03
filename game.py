@@ -3,7 +3,7 @@ import random
 
 class Game:
     def __init__(self):
-        self.board = np.zeros((4,4),int)
+        self.board = np.zeros((4,4),np.float64)
         self.score = 0
         self.gameEnd = False
         self.moves = 0

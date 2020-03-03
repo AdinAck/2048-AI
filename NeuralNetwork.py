@@ -3,7 +3,7 @@ import numpy as np
 import game as g
 
 hWidth = 4
-hDepth = 0
+hDepth = 4
 
 
 def sigmoid(x):
@@ -16,6 +16,7 @@ def getOutput(game,w):
     a = game.board
     for i in range(hDepth+1):
         a = sigmoid(np.dot(a.flatten(),w[i]))
+        # a = np.maximum(0,np.dot(a.flatten(),w[i]))
     a.shape = 4,4
     return sigmoid(np.sum(a,0))
 
@@ -25,7 +26,7 @@ def train(epochSize, iterations, threshold, randomFactor):
         p += 1
     f = open("log"+str(p)+".txt", 'w')
     w = np.ones((hDepth+1,hWidth**2,hWidth**2))
-    wList = np.array([])
+    wList = np.array([],dtype=np.complex128)
     for j in range(iterations):
         scores = np.array([],int)
         game = g.Game()
