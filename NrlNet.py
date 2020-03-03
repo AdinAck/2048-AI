@@ -1,8 +1,6 @@
 import os.path
 import numpy as np
 import game as g
-from pynput import keyboard
-import signal
 
 # Variable definitions
 hWidth = 4
