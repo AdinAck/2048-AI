@@ -85,6 +85,7 @@ def train(genSize, iterations, threshold, mutationFactor, hDepth=None, model=Non
         outputModel = None
     if outputLog != False:
         f.close()
+    if outputModel != False:
         np.save(outputModel, wList)
     print("Log saved as: {0}\nModel saved as: {1}".format(outputLog,outputModel))
 
