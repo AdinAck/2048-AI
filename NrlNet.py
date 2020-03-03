@@ -6,7 +6,6 @@ import signal
 
 # Variable definitions
 hWidth = 4
-hDepth = 4
 
 # Functions
 def sigmoid(x):
@@ -16,24 +15,26 @@ def sigmoid(x):
 # Get output from input
 def getOutput(game,w):
     a = game.board
-    for i in range(hDepth+1):
+    for i in range(np.size(w,0)):
         a = sigmoid(np.dot(a.flatten(),w[i]))
         # a = np.maximum(0,np.dot(a.flatten(),w[i]))
     a.shape = 4,4
     return sigmoid(np.sum(a,0))
 
-def train(genSize, iterations, threshold, mutationFactor, modelName=None):
-    p = 0
-    while os.path.exists("log"+str(p)+".txt"):
-        p += 1
-    f = open("log"+str(p)+".txt", 'w')
-    w = np.ones((hDepth+1,hWidth**2,hWidth**2))
-    if modelName != None:
-        wList = np.load(modelName)
+def train(genSize, iterations, threshold, mutationFactor, hDepth=None, model=None, outputModel=None, outputLog=None):
+    if outputLog == None:
+        f = open("log.txt", 'w')
+    else:
+        f = open(outputLog, 'w')
+    if model != None:
+        wList = np.load(model)
+        hDepth = np.size(wList, 1)-1
+        w = wList[0]
     else:
         wList = np.array([],dtype=np.complex128)
+        w = np.ones((hDepth+1,hWidth**2,hWidth**2))
     print("Beginning train session from {0}.\nHidden layers: {1}\nGeneration size: {2}\nIterations: {3}\
-    \nFitness threshold: {4}\nMutationFactor".format(modelName,np.size(w,0)-1,genSize,iterations,threshold,mutationFactor))
+    \nFitness threshold: {4}\nMutationFactor".format(model,np.size(w,0)-1,genSize,iterations,threshold,mutationFactor))
     print("\n====================")
     try:
         for j in range(iterations):
@@ -66,7 +67,7 @@ def train(genSize, iterations, threshold, mutationFactor, modelName=None):
                                 game.move(order[3])
                     o = getOutput(game,w)
                 scores = np.append(scores, game.score)
-                if j < 1 and modelName == None:
+                if j < 1 and model == None:
                     wList = np.append(wList, w)
             print("Epoch: ",j)
             print("Worst: ",np.sort(scores)[0])
@@ -74,16 +75,18 @@ def train(genSize, iterations, threshold, mutationFactor, modelName=None):
             print("Average: ",np.average(scores))
             print("====================")
             f.write(str(j)+"\t"+str(np.sort(scores)[0])+"\t"+str(np.sort(scores)[-1])+"\t"+str(np.average(scores))+"\n")
-            wList = improve(genSize, wList, scores, threshold, mutationFactor)
+            wList = improve(genSize, wList, hDepth, scores, threshold, mutationFactor)
     except KeyboardInterrupt:
         print("\nInterrupted, closing log and saving model...\n")
     print("Session complete from model \"{0}\".\nHidden layers: {1}\nGeneration size: {2}\nIterations: {3}\
-    \nFitness threshold: {4}\nMutationFactor\n".format(modelName,np.size(w,0)-1,genSize,j,threshold,mutationFactor))
+    \nFitness threshold: {4}\nMutationFactor\n".format(model,np.size(w,0)-1,genSize,j,threshold,mutationFactor))
     f.close()
-    np.save("model"+str(p)+".npy", wList)
-    print("Log saved as: {0}\nModel saved as: {1}".format("log"+str(p)+".txt","model"+str(p)+".npy"))
+    if outputModel == None:
+        outputModel = model
+    np.save(output, wList)
+    print("Log saved as: {0}\nModel saved as: {1}".format(outputLog,outputModel))
 
-def improve(genSize, wList, scores, threshold,mutationFactor):
+def improve(genSize, wList, hDepth, scores, threshold, mutationFactor):
     wList.shape = genSize,hDepth+1,hWidth**2,hWidth**2
     bestList = np.array([])
     for i in range(int(genSize*(threshold/100))):
@@ -97,5 +100,3 @@ def improve(genSize, wList, scores, threshold,mutationFactor):
             except IndexError:
                 raise Exception("Generation size is not divisible by fitness threshold.")
     return wList
-
-train(100,10000,10,.1)
