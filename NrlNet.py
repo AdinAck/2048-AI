@@ -25,7 +25,7 @@ def train(genSize, iterations, threshold, mutationFactor, hDepth=None, model=Non
     elif outputLog != False:
         f = open(outputLog, 'w')
     if model != None:
-        wList = np.load(model)
+        wList = np.load(model,allow_pickle=True)
         hDepth = np.size(wList, 1)-1
         w = wList[0]
     else:
