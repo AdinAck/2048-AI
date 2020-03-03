@@ -3,7 +3,7 @@ import random
 
 class Game:
     def __init__(self):
-        self.board = np.zeros((4,4),np.float64)
+        self.board = np.zeros((4,4),np.int64)
         self.score = 0
         self.gameEnd = False
         self.moves = 0
@@ -192,23 +192,3 @@ class Game:
                             self.gameEnd = False
         else: return False
         return True
-# # Key listening
-# def on_press(key):
-#     global self.board
-#     if not self.gameEnd:
-#         if "up" in str(key):
-#             move(self.board, 0)
-#         if "down" in str(key):
-#             move(self.board, 1)
-#         if "left" in str(key):
-#             move(self.board, 2)
-#         if "right" in str(key):
-#             move(self.board, 3)
-#
-# # Collect events until released
-# with keyself.board.Listener(on_press=on_press) as listener:
-#     listener.join()
-#
-# # ...or, in a non-blocking fashion:
-# listener = keyself.board.Listener(on_press=on_press)
-# listener.start()
