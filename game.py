@@ -192,6 +192,7 @@ class Game:
                             self.gameEnd = False
         else: return False
         return True
+        
 # # Key listening
 # def on_press(key):
 #     global self.board
