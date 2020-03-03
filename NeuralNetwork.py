@@ -7,7 +7,7 @@ hDepth = 4
 
 
 def sigmoid(x):
-    return 1/(1+np.exp(-x))
+    return 1/(1+np.exp(-x,dtype=np.complex128))
 
 # np.random.seed(1)
 
@@ -20,7 +20,7 @@ def getOutput(game,w):
     a.shape = 4,4
     return sigmoid(np.sum(a,0))
 
-def train(epochSize, iterations, threshold, randomFactor, modelName=None):
+def train(epochSize, iterations, threshold, mutationFactor, modelName=None):
     p = 0
     while os.path.exists("log"+str(p)+".txt"):
         p += 1
@@ -36,7 +36,6 @@ def train(epochSize, iterations, threshold, randomFactor, modelName=None):
         o = getOutput(game,w)
         for i in range(epochSize):
             game = g.Game()
-            # print(game.board)
             game.verbose = False
             if j >= 1:
                 w = wList[i]
@@ -69,11 +68,11 @@ def train(epochSize, iterations, threshold, randomFactor, modelName=None):
         print("Average: ",np.average(scores))
         print("====================")
         f.write(str(j)+"\t"+str(np.sort(scores)[0])+"\t"+str(np.sort(scores)[-1])+"\t"+str(np.average(scores))+"\n")
-        wList = improve(epochSize, wList, scores, threshold, randomFactor)
+        wList = improve(epochSize, wList, scores, threshold, mutationFactor)
     f.close()
     np.save("model"+str(p)+".npy", wList)
 
-def improve(epochSize, wList, scores, threshold,randomFactor):
+def improve(epochSize, wList, scores, threshold,mutationFactor):
     wList.shape = epochSize,hDepth+1,hWidth**2,hWidth**2
     bestList = np.array([])
     for i in range(int(epochSize*(threshold/100))):
@@ -82,6 +81,6 @@ def improve(epochSize, wList, scores, threshold,randomFactor):
     bestList = np.repeat(bestList, 100//threshold)
     for i in range(epochSize):
         if scores[i] != -1:
-                wList[i] = wList[int(bestList[i])] + wList[int(bestList[i])]*randomFactor*np.random.random((hDepth+1,hWidth**2,hWidth**2)) - randomFactor/2
+                wList[i] = wList[int(bestList[i])] + wList[int(bestList[i])]*mutationFactor*np.random.random((hDepth+1,hWidth**2,hWidth**2)) - mutationFactor/2
     return wList
-train(500,1000,10,10)
+train(500,1000,10,.1)
