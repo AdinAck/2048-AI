@@ -200,6 +200,7 @@ class Game:
             for x in range(4):
                 willMove = True
                 lockMove = False
+                zeroCount = 0
                 yRange = list(range(4))
                 for y in range(4):
                     if y != 3:
@@ -213,7 +214,13 @@ class Game:
                         if self.board[y+1,x] == 0:
                             print("Y: {0}\nX: {1}".format(y,x))
                             print(len(yRange))
+                            # zeroCount +=1
                             yRange.pop(y)
+                    # if self.board[y,x] != 0 and zeroCount >= 1:
+                    #     print("moving")
+                    #     self.board[y-zeroCount,x] = self.board[y,x]
+                    #     self.board[y,x] = 0
+                    #     zeroCount -= 1
                     if self.board[y,x] == 0 and not lockMove:
                         willMove = False
                     elif not willMove:
@@ -221,10 +228,10 @@ class Game:
                         lockMove = True
 
 g = Game()
-g.board = np.array([[1,0,0,0],
-                    [1,0,0,0],
-                    [1,0,0,0],
-                    [1,0,0,0]])
+g.board = np.array([[1,1,1,1],
+                    [1,1,1,1],
+                    [1,1,1,1],
+                    [1,1,1,1]])
 print(g.board)
 g.moveImprove(0)
 print(g.board)
