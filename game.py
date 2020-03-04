@@ -192,6 +192,26 @@ class Game:
                             self.gameEnd = False
         else: return False
         return True
+
+def moveImprove(self, direction):
+    preboard = np.array(self.board)
+    if direction is 0:
+        for x in range(4):
+            willMove = True
+            lockMove = False
+            for y in range(4):
+                if self.board[x,y] !=0 and y != 4:
+                    if self.board[x,y] == self.board[x,y+1]:
+                        self.board[x,y] = preboard[x,y]+1
+                        self.score += 2**(self.board[x,y])
+                        y += 1
+
+                if self.board[x,y] is 0 and !lockMove:
+                    willMove = false
+                elif !willMove:
+                    willMove = True
+                    lockMove = True
+
 # # Key listening
 # def on_press(key):
 #     global self.board
