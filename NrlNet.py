@@ -14,8 +14,8 @@ def sigmoid(x):
 def getOutput(game,w):
     a = game.board
     for i in range(np.size(w,0)):
-        # a = sigmoid(np.dot(a.flatten(),w[i]))
-        a = np.maximum(0,np.dot(a.flatten(),w[i]))
+        a = sigmoid(np.dot(a.flatten(),w[i]))
+        # a = np.maximum(0,np.dot(a.flatten(),w[i]))
     a.shape = 4,4
     return sigmoid(np.sum(a,0))
 

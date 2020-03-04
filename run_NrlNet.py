@@ -1,2 +1,2 @@
 from NrlNet import train
-train(100,3000,10,hDepth=4,outputLog="log3.txt",outputModel="model3.npy")
+train(100,3000,10,model="model4.npy",outputLog="log4.txt",outputModel="model4.npy")
