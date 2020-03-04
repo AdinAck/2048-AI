@@ -193,24 +193,42 @@ class Game:
         else: return False
         return True
 
-def moveImprove(self, direction):
-    preboard = np.array(self.board)
-    if direction is 0:
-        for x in range(4):
-            willMove = True
-            lockMove = False
-            for y in range(4):
-                if self.board[x,y] !=0 and y != 4:
-                    if self.board[x,y] == self.board[x,y+1]:
-                        self.board[x,y] = preboard[x,y]+1
-                        self.score += 2**(self.board[x,y])
-                        y += 1
+    def moveImprove(self, direction):
+        preboard = np.array(self.board)
+        if direction == 0:
+            xRange = list(range(4))
+            for x in range(4):
+                willMove = True
+                lockMove = False
+                yRange = list(range(4))
+                for y in range(4):
+                    if y != 3:
+                        if self.board[y,x] != 0:
+                            if self.board[y,x] == self.board[y+1,x]:
+                                self.board[y,x] = preboard[y,x]+1
+                                self.board[y+1,x] = 0
+                                self.score += 2**(self.board[y,x])
+                                if self.board[y+1,x] == 0 and not lockMove:
+                                    willMove = False
+                        if self.board[y+1,x] == 0:
+                            print("Y: {0}\nX: {1}".format(y,x))
+                            print(len(yRange))
+                            yRange.pop(y)
+                    if self.board[y,x] == 0 and not lockMove:
+                        willMove = False
+                    elif not willMove:
+                        willMove = True
+                        lockMove = True
 
-                if self.board[x,y] is 0 and !lockMove:
-                    willMove = false
-                elif !willMove:
-                    willMove = True
-                    lockMove = True
+g = Game()
+g.board = np.array([[1,0,0,0],
+                    [1,0,0,0],
+                    [1,0,0,0],
+                    [1,0,0,0]])
+print(g.board)
+g.moveImprove(0)
+print(g.board)
+
 
 # # Key listening
 # def on_press(key):
