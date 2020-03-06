@@ -201,30 +201,44 @@ class Game:
                 willMove = True
                 lockMove = False
                 zeroCount = 0
-                lastNumber = -1
-                lastNumIndex = -1
+                lastNumber = self.board[0,x]
+                lastNumIndex = 0
                 yRange = list(range(4))
-                for y in range(4):
+                for y in [1,2,3]:
                     # if y != 3:
-                    if self.board[y,x] == 0:
-                        zeroCount+=1
                     if self.board[y,x] != 0:
-                        if lastNumber == -1:
-                            lastNumber = self.board[y,x]
-                            lastNumIndex = y
+                        if lastNumber == 0:
+                            self.board[lastNumIndex,x] == self.board[y,x]
+                            self.board[y,x] = 0
+                            lastNumber = self.board[lastNumIndex,x]
                         elif lastNumber == self.board[y,x]:
-                            self.board[lastNumIndex,x] = lastNumber+1
+                            self.board[lastNumIndex,x] = self.board[y,x]+1
+                            self.board[y,x] = 0
                             self.score += 2**(self.board[lastNumIndex,x])
-                            self.board[y,x] = 0
-                            lastNumber = -1
-                            lastNumIndex = -1
+                            lastNumIndex +=1
+                            lastNumber = self.board[lastNumIndex,x]
                         else:
-                            print(x)
-                            print(y)
-                            lastNumber = self.board[y,x]
-                            self.board[y-zeroCount,x] = self.board[y,x]
-                            self.board[y,x] = 0
-                            lastNumIndex = y-zeroCount
+                            
+                        #
+                        # if lastNumber == -1:
+                        #     lastNumber = self.board[y,x]
+                        #     lastNumIndex = y
+                        # elif lastNumber == self.board[y,x]:
+                        #     self.board[lastNumIndex,x] = lastNumber+1
+                        #     self.score += 2**(self.board[lastNumIndex,x])
+                        #     self.board[y,x] = 0
+                        #     lastNumber = -1
+                        # elif lastNumber == 0:
+                        #     self.board[lastNumIndex,x] = self.board[y,x]
+                        #     self.board[y,x] = 0
+                        #     lastNumber = self.board[lastNumIndex,x]
+                        # else:
+                        #     print(x)
+                        #     print(y)
+                        #     lastNumber = self.board[y,x]
+                        #     self.board[lastNumIndex+1,x] = self.board[y,x]
+                        #     self.board[y,x] = 0
+                        #     lastNumIndex = lastNumIndex+1
 
                     #         if self.board[y,x] == self.board[y+1,x]:
                     #             self.board[y,x] = preboard[y,x]+1
