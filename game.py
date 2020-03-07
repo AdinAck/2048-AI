@@ -27,7 +27,7 @@ class Game:
         return zeroList
 
     def move(self, direction):
-        preboard = np.array(self.board)
+        #preboard = np.array(self.board)
         mergedList = []
         if direction == 0:
             if self.verbose:
@@ -195,14 +195,35 @@ class Game:
 
     def moveImprove(self, direction):
         preboard = np.array(self.board)
-        if direction == 0:
+        if direction == 0: #UP
             for x in range(4):
                 lastNumber = self.board[0,x]
                 lastNumIndex = 0
                 for y in [1,2,3]:
                     if self.board[y,x] != 0:
                         if lastNumber == 0:
-                            print(self.board[y,x])
+                            self.board[lastNumIndex,x] = self.board[y,x]
+                            self.board[y,x] = 0
+                            lastNumber = self.board[lastNumIndex,x]
+                        elif lastNumber == self.board[y,x]:
+                            self.board[lastNumIndex,x] = lastNumber+1
+                            self.board[y,x] = 0
+                            self.score += 2**(self.board[lastNumIndex,x])
+                            lastNumIndex +=1
+                            lastNumber = self.board[lastNumIndex,x]
+                        else:
+                            if  lastNumIndex+1 < y:
+                                self.board[lastNumIndex+1,x] = self.board[y,x]
+                                self.board[y,x] = 0
+                            lastNumIndex +=1
+                            lastNumber = self.board[lastNumIndex,x]
+        if direction == 1: #DOWN
+            for x in range(4):
+                lastNumber = self.board[3,x]
+                lastNumIndex = 3
+                for y in [2,1,0]:
+                    if self.board[y,x] != 0:
+                        if lastNumber == 0:
                             self.board[lastNumIndex,x] = self.board[y,x]
                             self.board[y,x] = 0
                             lastNumber = self.board[lastNumIndex,x]
@@ -210,21 +231,65 @@ class Game:
                             self.board[lastNumIndex,x] = self.board[y,x]+1
                             self.board[y,x] = 0
                             self.score += 2**(self.board[lastNumIndex,x])
-                            lastNumIndex +=1
+                            lastNumIndex -=1
                             lastNumber = self.board[lastNumIndex,x]
                         else:
-                            self.board[lastNumIndex+1,x] = self.board[y,x]
-                            self.board[y,x] = 0
-                            lastNumIndex +=1
+                            if lastNumIndex-1 > y:
+                                self.board[lastNumIndex-1,x] = self.board[y,x]
+                                self.board[y,x] = 0
+                            lastNumIndex -=1
                             lastNumber = self.board[lastNumIndex,x]
-
+        if direction == 2: #LEFT
+            for y in range(4):
+                lastNumber = self.board[y,0]
+                lastNumIndex = 0
+                for x in [1,2,3]:
+                    if self.board[y,x] != 0:
+                        if lastNumber == 0:
+                            self.board[y,lastNumIndex] = self.board[y,x]
+                            self.board[y,x] = 0
+                            lastNumber = self.board[y,lastNumIndex]
+                        elif lastNumber == self.board[y,x]:
+                            self.board[y,lastNumIndex] = lastNumber+1
+                            self.board[y,x] = 0
+                            self.score += 2**(self.board[y,lastNumIndex])
+                            lastNumIndex +=1
+                            lastNumber = self.board[y,lastNumIndex]
+                        else:
+                            if  lastNumIndex+1 < x:
+                                self.board[y,lastNumIndex+1] = self.board[y,x]
+                                self.board[y,x] = 0
+                            lastNumIndex +=1
+                            lastNumber = self.board[y,lastNumIndex]
+        if direction == 3: #RIGHT
+            for y in range(4):
+                lastNumber = self.board[y,3]
+                lastNumIndex = 3
+                for x in [2,1,0]:
+                    if self.board[y,x] != 0:
+                        if lastNumber == 0:
+                            self.board[y,lastNumIndex] = self.board[y,x]
+                            self.board[y,x] = 0
+                            lastNumber = self.board[y,lastNumIndex]
+                        elif lastNumber == self.board[y,x]:
+                            self.board[y,lastNumIndex] = lastNumber+1
+                            self.board[y,x] = 0
+                            self.score += 2**(self.board[y,lastNumIndex])
+                            lastNumIndex -=1
+                            lastNumber = self.board[y,lastNumIndex]
+                        else:
+                            if  lastNumIndex-1 > x:
+                                self.board[y,lastNumIndex-1] = self.board[y,x]
+                                self.board[y,x] = 0
+                            lastNumIndex -=1
+                            lastNumber = self.board[y,lastNumIndex]
 g = Game()
-g.board = np.array([[1,1,0,1],
-                    [1,2,1,0],
-                    [1,2,0,1],
-                    [1,1,1,0]])
+g.board = np.array([[1,1,1,1],
+                    [1,2,2,1],
+                    [1,0,0,1],
+                    [1,0,1,0]])
 print(g.board)
-g.moveImprove(0)
+g.moveImprove(3)
 
 print(g.board)
 
