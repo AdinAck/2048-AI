@@ -30,7 +30,7 @@ def train(genSize, iterations, threshold, hDepth=None, model=None, outputModel=F
         w = wList[0]
     else:
         wList = np.array([],dtype=np.float64)
-        w = np.ones((hDepth+1,hWidth**2,hWidth**2))
+        w = np.random.standard_normal((hDepth+1,hWidth**2,hWidth**2))/4 # 4 is hWidth
     print("Beginning train session from {0}.\nHidden layers: {1}\nGeneration size: {2}\nIterations: {3}\
     \nFitness threshold: Top {4} percent".format(model,np.size(w,0)-1,genSize,iterations,threshold))
     print("\n====================")
