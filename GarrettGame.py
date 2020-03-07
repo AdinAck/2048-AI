@@ -54,7 +54,6 @@ def move(direction, board):
                         lastNumIndex +=1
                         lastNumber = board[lastNumIndex,x]
                     else:
-                        print(lastNumIndex)
                         if  lastNumIndex+1 < y and lastNumIndex != height-1:
                             board[lastNumIndex+1,x] = board[y,x]
                             board[y,x] = 0
@@ -211,6 +210,8 @@ while run:
                     color = (255,0,0)
                 if board[i,j] == 2:
                     color = (0,0,255)
+                if board[i,j] == 3:
+                    color = (0,255,0)
                 pygame.draw.rect(win, color, (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
 
     pygame.display.update()
