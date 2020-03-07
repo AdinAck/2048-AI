@@ -2,7 +2,10 @@ import numpy as np
 import random
 import pygame
 
-board = np.zeros((4,4),int)
+width = 4
+height = 4
+
+board = np.zeros((height,width),int)
 score = 0
 gameEnd = False
 
@@ -105,7 +108,8 @@ def move(direction, board):
                         lastNumIndex +=1
                         lastNumber = board[y,lastNumIndex]
     if direction == 3: #RIGHT
-        yRange = np.arange(0,np.size(0))
+        yRange = np.arange(0,np.size(board, 0))
+        print(yRange)
         for y in yRange:
             lastNumber = board[y,3]
             lastNumIndex = 3
@@ -153,7 +157,12 @@ def move(direction, board):
 
 pygame.init()
 
-win = pygame.display.set_mode((500,500))
+winSizeX = 512
+bufferSize = 8
+squareCoord = bufferSize,bufferSize
+squareSize = (winSizeX-((width+1)*bufferSize))//width
+winSizeY = bufferSize*(height+1)+(squareSize*height)
+win = pygame.display.set_mode((winSizeX,winSizeY))
 pygame.display.set_caption("2048")
 
 run = True
@@ -164,6 +173,7 @@ while run:
             run = False
 
     keys = pygame.key.get_pressed()
+
 
     if not keys[pygame.K_UP]:
         upKey = False
@@ -187,10 +197,9 @@ while run:
         move(3, board)
         rightKey = True
 
-    for i,j in zip(range(np.size(board,0)),range(np.size(board,1))):
-        print(i,j)
-        # pygame.draw.rect(win, (255,255,255), (10,10,32,32))
-
+    for i in range(height):
+        for j in range(width):
+            pygame.draw.rect(win, (255,255,255), (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
     pygame.display.update()
 
 pygame.quit()
