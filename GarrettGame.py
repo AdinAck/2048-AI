@@ -2,10 +2,7 @@ import numpy as np
 import random
 import pygame
 
-board = np.array([[0,0,0,0],
-                  [0,0,0,0],
-                  [0,0,0,0],
-                  [0,0,0,0]])
+board = np.zeros((4,4),int)
 score = 0
 gameEnd = False
 
@@ -27,7 +24,7 @@ def genRandomBlock(board):
 genRandomBlock(board)
 genRandomBlock(board)
 
-print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+# print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
 print(board)
 print("Score: {0}".format(score))
 
@@ -35,12 +32,12 @@ def move(direction, board):
     global score
     preboard = np.array(board)
     if direction == 0: #UP
-        xRange = list(range(len(board[0])))
+        xRange = np.arange(0,np.size(board,1))
         for x in xRange:
             lastNumber = board[0,x]
             lastNumIndex = 0
-            yRange = list(range(len(board)))
-            yRange.pop(0)
+            yRange = np.arange(1,np.size(board, 0))
+
             for y in yRange:
                 if board[y,x] != 0:
                     if lastNumber == 0:
@@ -64,8 +61,7 @@ def move(direction, board):
         for x in xRange:
             lastNumber = board[3,x]
             lastNumIndex = 3
-            yRange = list(range(board.size-2,-1,-1))
-
+            yRange = np.arange(np.size(board, 0)-2,-1,-1)
             for y in yRange:
                 if board[y,x] != 0:
                     if lastNumber == 0:
@@ -85,10 +81,12 @@ def move(direction, board):
                         lastNumIndex -=1
                         lastNumber = board[lastNumIndex,x]
     if direction == 2: #LEFT
-        for y in range(4):
+        yRange = np.arange(0,np.size(board,0)-1)
+        for y in yRange:
             lastNumber = board[y,0]
             lastNumIndex = 0
-            for x in [1,2,3]:
+            xRange = np.arange(1,np.size(board,1))
+            for x in xRange:
                 if board[y,x] != 0:
                     if lastNumber == 0:
                         board[y,lastNumIndex] = board[y,x]
@@ -107,10 +105,12 @@ def move(direction, board):
                         lastNumIndex +=1
                         lastNumber = board[y,lastNumIndex]
     if direction == 3: #RIGHT
-        for y in range(4):
+        yRange = np.arange(0,np.size(0))
+        for y in yRange:
             lastNumber = board[y,3]
             lastNumIndex = 3
-            for x in [2,1,0]:
+            xRange = np.arange(np.size(board,1)-2,-1,-1)
+            for x in xRange:
                 if board[y,x] != 0:
                     if lastNumber == 0:
                         board[y,lastNumIndex] = board[y,x]
@@ -148,7 +148,6 @@ def move(direction, board):
                 print("\nGame over!")
                 print("====================")
                 print("Final score: {0}".format(score))
-                print("Number of moves: {0}".format(moves))
     else: return False
     return True
 
@@ -166,22 +165,32 @@ while run:
 
     keys = pygame.key.get_pressed()
 
-    if keys[pygame.K_UP]:
-        # move(0, board)
-        print("yeet")
-    if keys[pygame.K_DOWN]:
-        # move(1, board)
-        print("yeet")
-    if keys[pygame.K_LEFT]:
-        # move(2, board)
-        print("yeet")
-    if keys[pygame.K_RIGHT]:
-        # move(3, board)
-        print("yeet")
+    if not keys[pygame.K_UP]:
+        upKey = False
+    if not keys[pygame.K_DOWN]:
+        downKey = False
+    if not keys[pygame.K_LEFT]:
+        leftKey = False
+    if not keys[pygame.K_RIGHT]:
+        rightKey = False
 
-    pygame.draw.rect(win, (255,255,255), (10,10,32,32))
+    if keys[pygame.K_UP] and not upKey:
+        move(0, board)
+        upKey = True
+    if keys[pygame.K_DOWN] and not downKey:
+        move(1, board)
+        downKey = True
+    if keys[pygame.K_LEFT] and not leftKey:
+        move(2, board)
+        leftKey = True
+    if keys[pygame.K_RIGHT] and not rightKey:
+        move(3, board)
+        rightKey = True
+
+    for i,j in zip(range(np.size(board,0)),range(np.size(board,1))):
+        print(i,j)
+        # pygame.draw.rect(win, (255,255,255), (10,10,32,32))
+
     pygame.display.update()
-
-# test
 
 pygame.quit()
