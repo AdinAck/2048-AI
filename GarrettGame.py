@@ -2,8 +2,8 @@ import numpy as np
 import random
 import pygame
 
-width = 4
-height = 4
+width = 2
+height = 2
 
 board = np.zeros((height,width),int)
 score = 0
@@ -11,8 +11,8 @@ gameEnd = False
 
 def genRandomBlock(board):
     zeroList = np.array([])
-    for i in range(4):
-        for j in range(4):
+    for i in range(height):
+        for j in range(width):
             if board[i,j] == 0:
                 zeroList = np.append(zeroList, [i,j])
     try:
@@ -35,11 +35,11 @@ def move(direction, board):
     global score
     preboard = np.array(board)
     if direction == 0: #UP
-        xRange = np.arange(0,np.size(board,1))
+        xRange = np.arange(0,width)
         for x in xRange:
             lastNumber = board[0,x]
             lastNumIndex = 0
-            yRange = np.arange(1,np.size(board, 0))
+            yRange = np.arange(1,height)
 
             for y in yRange:
                 if board[y,x] != 0:
@@ -54,17 +54,18 @@ def move(direction, board):
                         lastNumIndex +=1
                         lastNumber = board[lastNumIndex,x]
                     else:
-                        if  lastNumIndex+1 < y:
+                        print(lastNumIndex)
+                        if  lastNumIndex+1 < y and lastNumIndex != height-1:
                             board[lastNumIndex+1,x] = board[y,x]
                             board[y,x] = 0
                         lastNumIndex +=1
                         lastNumber = board[lastNumIndex,x]
     if direction == 1: #DOWN
-        xRange = list(range(len(board[0])))
+        xRange = np.arange(0,width)
         for x in xRange:
-            lastNumber = board[3,x]
-            lastNumIndex = 3
-            yRange = np.arange(np.size(board, 0)-2,-1,-1)
+            lastNumber = board[height-1,x]
+            lastNumIndex = height-1
+            yRange = np.arange(height-2,-1,-1)
             for y in yRange:
                 if board[y,x] != 0:
                     if lastNumber == 0:
@@ -78,17 +79,17 @@ def move(direction, board):
                         lastNumIndex -=1
                         lastNumber = board[lastNumIndex,x]
                     else:
-                        if lastNumIndex-1 > y:
+                        if lastNumIndex-1 > y and  lastNumIndex != height-1:
                             board[lastNumIndex-1,x] = board[y,x]
                             board[y,x] = 0
                         lastNumIndex -=1
                         lastNumber = board[lastNumIndex,x]
     if direction == 2: #LEFT
-        yRange = np.arange(0,np.size(board,0)-1)
+        yRange = np.arange(0,height)
         for y in yRange:
             lastNumber = board[y,0]
             lastNumIndex = 0
-            xRange = np.arange(1,np.size(board,1))
+            xRange = np.arange(1,width)
             for x in xRange:
                 if board[y,x] != 0:
                     if lastNumber == 0:
@@ -102,18 +103,17 @@ def move(direction, board):
                         lastNumIndex +=1
                         lastNumber = board[y,lastNumIndex]
                     else:
-                        if  lastNumIndex+1 < x:
+                        if  lastNumIndex+1 < x and lastNumIndex != width-1:
                             board[y,lastNumIndex+1] = board[y,x]
                             board[y,x] = 0
                         lastNumIndex +=1
                         lastNumber = board[y,lastNumIndex]
     if direction == 3: #RIGHT
-        yRange = np.arange(0,np.size(board, 0))
-        print(yRange)
+        yRange = np.arange(0,height)
         for y in yRange:
-            lastNumber = board[y,3]
-            lastNumIndex = 3
-            xRange = np.arange(np.size(board,1)-2,-1,-1)
+            lastNumber = board[y,width-1]
+            lastNumIndex = width-1
+            xRange = np.arange(width-2,-1,-1)
             for x in xRange:
                 if board[y,x] != 0:
                     if lastNumber == 0:
@@ -127,7 +127,7 @@ def move(direction, board):
                         lastNumIndex -=1
                         lastNumber = board[y,lastNumIndex]
                     else:
-                        if  lastNumIndex-1 > x:
+                        if  lastNumIndex-1 > x and lastNumIndex != width-1:
                             board[y,lastNumIndex-1] = board[y,x]
                             board[y,x] = 0
                         lastNumIndex -=1
@@ -138,30 +138,31 @@ def move(direction, board):
         # print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
         print(board)
         print("Score: {0}".format(score))
-        if np.size(zeroList,0) == 1:
-            gameEnd = True
-            for i in [1,2]:
-                for j in range(4):
-                    if board[i,j] == board[i-1,j] or board[i,j] == board[i+1,j]:
-                        gameEnd = False
-            for j in [1,2]:
-                for i in range(4):
-                    if board[i,j] == board[i,j-1] or board[i,j] == board[i,j+1]:
-                        gameEnd = False
-            if gameEnd:
-                print("\nGame over!")
-                print("====================")
-                print("Final score: {0}".format(score))
+        # if np.size(zeroList,0) == 1:
+        #     gameEnd = True
+        #     for i in range(0,height):
+        #         for j in range(1,width):
+        #             if board[i,j] == board[i-1,j] or board[i,j] == board[i+1,j]:
+        #                 gameEnd = False
+        #     for j in range(0,width):
+        #         for i in range(1,height):
+        #             if board[i,j] == board[i,j-1] or board[i,j] == board[i,j+1]:
+        #                 gameEnd = False
+        #     if gameEnd:
+        #         print("\nGame over!")
+        #         print("====================")
+        #         print("Final score: {0}".format(score))
     else: return False
     return True
 
 pygame.init()
 
 winSizeX = 512
-bufferSize = 8
+bufferSize = winSizeX//width//12
 squareCoord = bufferSize,bufferSize
 squareSize = (winSizeX-((width+1)*bufferSize))//width
 winSizeY = bufferSize*(height+1)+(squareSize*height)
+
 win = pygame.display.set_mode((winSizeX,winSizeY))
 pygame.display.set_caption("2048")
 
@@ -171,6 +172,8 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+
+    win.fill((187,173,160))
 
     keys = pygame.key.get_pressed()
 
@@ -199,7 +202,17 @@ while run:
 
     for i in range(height):
         for j in range(width):
-            pygame.draw.rect(win, (255,255,255), (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
+            pygame.draw.rect(win, (205,193,179), (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
+
+    for i in range(height):
+        for j in range(width):
+            if board[i,j] != 0:
+                if board[i,j] == 1:
+                    color = (255,0,0)
+                if board[i,j] == 2:
+                    color = (0,0,255)
+                pygame.draw.rect(win, color, (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
+
     pygame.display.update()
 
 pygame.quit()
