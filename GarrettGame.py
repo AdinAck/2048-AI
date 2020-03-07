@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from pynput import keyboard
+import pygame
 
 board = np.array([[0,0,0,0],
                   [0,0,0,0],
@@ -31,7 +31,7 @@ print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
 print(board)
 print("Score: {0}".format(score))
 
-def move(self, direction, board):
+def move(direction, board):
     global score
     preboard = np.array(board)
     if direction == 0: #UP
@@ -125,7 +125,7 @@ def move(self, direction, board):
 
     if not np.array_equal(preboard,board):
         zeroList = genRandomBlock(board)
-        print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+        # print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
         print(board)
         print("Score: {0}".format(score))
         if np.size(zeroList,0) == 1:
@@ -146,24 +146,34 @@ def move(self, direction, board):
     else: return False
     return True
 
-# Key listening
-def on_press(key):
-    global board
-    global score
-    if not gameEnd:
-        if "up" in str(key):
-            move(board, 0, board)
-        if "down" in str(key):
-            move(board, 1, board)
-        if "left" in str(key):
-            move(board, 2, board)
-        if "right" in str(key):
-            move(board, 3, board)
+pygame.init()
 
-# Collect events until released
-with keyboard.Listener(on_press=on_press) as listener:
-    listener.join()
+win = pygame.display.set_mode((500,500))
+pygame.display.set_caption("2048")
 
-# ...or, in a non-blocking fashion:
-listener = keyboard.Listener(on_press=on_press)
-listener.start()
+run = True
+while run:
+    # Close window when X is clicked
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+
+    keys = pygame.key.get_pressed()
+
+    if keys[pygame.K_UP]:
+        # move(0, board)
+        print("yeet")
+    if keys[pygame.K_DOWN]:
+        # move(1, board)
+        print("yeet")
+    if keys[pygame.K_LEFT]:
+        # move(2, board)
+        print("yeet")
+    if keys[pygame.K_RIGHT]:
+        # move(3, board)
+        print("yeet")
+
+    pygame.draw.rect(win, (255,255,255), (10,10,32,32))
+    pygame.display.update()
+
+pygame.quit()
