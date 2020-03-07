@@ -30,7 +30,7 @@ def train(genSize, iterations, threshold, hDepth=None, model=None, outputModel=F
         w = wList[0]
     else:
         wList = np.array([],dtype=np.float64)
-        w = np.ones((hDepth+1,hWidth**2,hWidth**2))
+        w = np.random.standard_normal((hDepth+1,hWidth**2,hWidth**2))/4 # 4 is hWidth
     print("Beginning train session from {0}.\nHidden layers: {1}\nGeneration size: {2}\nIterations: {3}\
     \nFitness threshold: Top {4} percent".format(model,np.size(w,0)-1,genSize,iterations,threshold))
     print("\n====================")
@@ -104,7 +104,7 @@ def improve(genSize, wList, hDepth, scores, threshold):
     for i in range(genSize):
         if scores[i] != -1:
             try:
-                wList[i] = wList[int(bestList[i])] + 2*np.random.random((hDepth+1,hWidth**2,hWidth**2)) - 1
+                wList[i] = wList[int(bestList[i])] + np.random.standard_normal((hDepth+1,hWidth**2,hWidth**2))
             except IndexError:
                 raise Exception("Generation size is not divisible by fitness threshold.")
     return wList
