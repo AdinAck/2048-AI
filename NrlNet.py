@@ -104,7 +104,7 @@ def improve(genSize, wList, hDepth, scores, threshold):
     for i in range(genSize):
         if scores[i] != -1:
             try:
-                wList[i] = wList[int(bestList[i])] + np.random.standard_normal((hDepth+1,hWidth**2,hWidth**2))
+                wList[i] = wList[int(bestList[i])] + 2*np.random.random((hDepth+1,hWidth**2,hWidth**2)) - 1
             except IndexError:
                 raise Exception("Generation size is not divisible by fitness threshold.")
     return wList
