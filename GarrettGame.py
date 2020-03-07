@@ -35,10 +35,13 @@ def move(self, direction, board):
     global score
     preboard = np.array(board)
     if direction == 0: #UP
-        for x in range(4):
+        xRange = list(range(len(board[0])))
+        for x in xRange:
             lastNumber = board[0,x]
             lastNumIndex = 0
-            for y in [1,2,3]:
+            yRange = list(range(len(board)))
+            yRange.pop(0)
+            for y in yRange:
                 if board[y,x] != 0:
                     if lastNumber == 0:
                         board[lastNumIndex,x] = board[y,x]
@@ -57,10 +60,13 @@ def move(self, direction, board):
                         lastNumIndex +=1
                         lastNumber = board[lastNumIndex,x]
     if direction == 1: #DOWN
-        for x in range(4):
+        xRange = list(range(len(board[0])))
+        for x in xRange:
             lastNumber = board[3,x]
             lastNumIndex = 3
-            for y in [2,1,0]:
+            yRange = list(range(board.size-2,-1,-1))
+            
+            for y in yRange:
                 if board[y,x] != 0:
                     if lastNumber == 0:
                         board[lastNumIndex,x] = board[y,x]
