@@ -65,7 +65,7 @@ def move(direction, board):
             lastNumber = board[3,x]
             lastNumIndex = 3
             yRange = list(range(board.size-2,-1,-1))
-            
+
             for y in yRange:
                 if board[y,x] != 0:
                     if lastNumber == 0:
@@ -181,5 +181,7 @@ while run:
 
     pygame.draw.rect(win, (255,255,255), (10,10,32,32))
     pygame.display.update()
+
+# test
 
 pygame.quit()
