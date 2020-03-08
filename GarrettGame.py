@@ -3,15 +3,15 @@ import numpy as np
 import random
 import pygame
 
-width = 3
-height = 3
+width = 6
+height = 5
 
-board = np.zeros((height,width),int)
-# board = np.array([[0,0,0,0,0,0],
-#                   [0,0,0,0,0,0],
-#                   [-1,-1,-1,0,-2,0],
-#                   [-1,-1,-1,0,0,0],
-#                   [-1,-1,-1,0,0,0]])
+# board = np.zeros((height,width),int)
+board = np.array([[0,0,0,0,0,0],
+                  [0,0,0,0,0,0],
+                  [-1,-1,-1,0,-2,0],
+                  [-1,-1,-1,0,0,0],
+                  [-1,-1,-1,0,0,0]])
 score = 0
 gameEnd = False
 
