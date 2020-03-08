@@ -2,12 +2,16 @@ import os
 import numpy as np
 import random
 import pygame
-import math
 
 width = 6
-height = 4
+height = 5
 
 board = np.zeros((height,width),int)
+board = np.array([[0,0,0,0,0,0],
+                  [0,0,0,0,0,0],
+                  [-1,-1,-1,0,-2,0],
+                  [-1,-1,-1,0,0,0],
+                  [-1,-1,-1,0,0,0]])
 score = 0
 gameEnd = False
 
@@ -183,6 +187,8 @@ fontFace2 = scheme[0][1]
 boardColor = scheme[1][0]
 squareColor = scheme[1][1]
 
+menu = True
+gameStart = False
 run = True
 while run:
     # Close window when X is clicked
@@ -192,107 +198,141 @@ while run:
         if event.type == pygame.VIDEORESIZE:
             win = pygame.display.set_mode(size=(event.w,event.h),flags=pygame.RESIZABLE)
 
-    boardSizeX = int((pygame.display.get_surface().get_size()[0]**2+pygame.display.get_surface().get_size()[1]**2)**(1/2)*(width/height)//2.5)
+    displaySize = pygame.display.get_surface().get_size()
+
+    boardSizeX = int((displaySize[0]**2+displaySize[1]**2)**(1/2)*(width/height)//2.5)
     bufferSize = boardSizeX//width//12
     boardSizeX = boardSizeX-bufferSize
     squareSize = (boardSizeX-(bufferSize*(width+1)))//width
     boardSizeX = squareSize*width+bufferSize*(width+1)
     boardSizeY = bufferSize*(height+1)+(squareSize*height)
-    squareCoord = pygame.display.get_surface().get_size()[0]//2-boardSizeX//2+bufferSize,pygame.display.get_surface().get_size()[1]//2-boardSizeY//2+bufferSize
+    squareCoord = displaySize[0]//2-boardSizeX//2+bufferSize,displaySize[1]//2-boardSizeY//2+bufferSize
 
     win.fill((255,255,255))
-    pygame.draw.rect(win, boardColor, (squareCoord[0]-bufferSize,squareCoord[1]-bufferSize,boardSizeX,boardSizeY))
 
-    font = pygame.font.SysFont(fontFace2, 48)
-    text = font.render("Score: "+str(score), True, boardColor)
-    win.blit(text,(squareCoord[0]-bufferSize,squareCoord[1]-bufferSize-text.get_height()))
+    if menu:
+        button1Size = 100,50
+        button1Pos = displaySize[0]//2,displaySize[1]//(3/2)
+        if pygame.mouse.get_pos()[0] <= button1Pos[0]+button1Size[0]//2 and pygame.mouse.get_pos()[0] >= button1Pos[0]-button1Size[0]//2 and pygame.mouse.get_pos()[1] <= button1Pos[1]+button1Size[1]//2 and pygame.mouse.get_pos()[1] >= button1Pos[1]-button1Size[1]//2:
+            button1Color = scheme[1][1]
+            if pygame.mouse.get_pressed()[0]:
+                menu = False
+                gameStart = True
+        else:
+            button1Color = boardColor
+        pygame.draw.rect(win, button1Color, (button1Pos[0]-button1Size[0]//2,button1Pos[1]-button1Size[1]//2,button1Size[0],button1Size[1]))
+        font = pygame.font.SysFont(fontFace2, 32)
+        text = font.render("PLAY", True, scheme[2][1])
+        win.blit(text,(button1Pos[0]-text.get_width()//2,button1Pos[1]-text.get_height()//2))
 
-    keys = pygame.key.get_pressed()
+        font = pygame.font.SysFont(fontFace2, 60)
+        text = font.render("2048 MAKER", True, scheme[2][1])
+        win.blit(text,(displaySize[0]//2-text.get_width()//2,displaySize[1]//(3)-text.get_height()//2))
 
-    if not keys[pygame.K_UP]:
-        upKey = False
-    if not keys[pygame.K_DOWN]:
-        downKey = False
-    if not keys[pygame.K_LEFT]:
-        leftKey = False
-    if not keys[pygame.K_RIGHT]:
-        rightKey = False
+    if gameStart:
+        # pygame.draw.rect(win, boardColor, (squareCoord[0]-bufferSize,squareCoord[1]-bufferSize,boardSizeX,boardSizeY))
 
-    if keys[pygame.K_UP] and not upKey:
-        move(0, board)
-        upKey = True
-    if keys[pygame.K_DOWN] and not downKey:
-        move(1, board)
-        downKey = True
-    if keys[pygame.K_LEFT] and not leftKey:
-        move(2, board)
-        leftKey = True
-    if keys[pygame.K_RIGHT] and not rightKey:
-        move(3, board)
-        rightKey = True
-
-    if keys[pygame.K_SPACE]:
-        move(0, board)
-        move(3, board)
-        move(1, board)
-        move(2, board)
-
-    for i in range(height):
-        for j in range(width):
-            pygame.draw.rect(win, (205,193,179), (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
-
-    for i in range(height):
-        for j in range(width):
-            if board[i,j] != 0:
-                if board[i,j] == 1:
-                    blockColor = scheme[board[i,j]+1][0]
-                    textColor = scheme[board[i,j]+1][1]
-                if board[i,j] == 2:
-                    blockColor = scheme[board[i,j]+1][0]
-                    textColor = scheme[board[i,j]+1][1]
-                if board[i,j] == 3:
-                    blockColor = scheme[board[i,j]+1][0]
-                    textColor = scheme[board[i,j]+1][1]
-                if board[i,j] == 4:
-                    blockColor = scheme[board[i,j]+1][0]
-                    textColor = scheme[board[i,j]+1][1]
-                if board[i,j] == 5:
-                    blockColor = scheme[board[i,j]+1][0]
-                    textColor = scheme[board[i,j]+1][1]
-                if board[i,j] == 6:
-                    blockColor = scheme[board[i,j]+1][0]
-                    textColor = scheme[board[i,j]+1][1]
-                if board[i,j] == 7:
-                    blockColor = scheme[board[i,j]+1][0]
-                    textColor = scheme[board[i,j]+1][1]
-                if board[i,j] == 8:
-                    blockColor = scheme[board[i,j]+1][0]
-                    textColor = scheme[board[i,j]+1][1]
-                if board[i,j] == 9:
-                    blockColor = scheme[board[i,j]+1][0]
-                    textColor = scheme[board[i,j]+1][1]
-                if board[i,j] == 10:
-                    blockColor = scheme[board[i,j]+1][0]
-                    textColor = scheme[board[i,j]+1][1]
-                if board[i,j] == 11:
-                    blockColor = scheme[board[i,j]+1][0]
-                    textColor = scheme[board[i,j]+1][1]
-                if board[i,j] > 11:
-                    blockColor = scheme[-1][0]
-                    textColor = scheme[-1][1]
-                pygame.draw.rect(win, blockColor, (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
-                font = pygame.font.SysFont(fontFace1, int(squareSize/(1+(len(str(2**board[i,j]))*.5))))
-                text = font.render(str(2**board[i,j]), True, textColor)
-                win.blit(text,(squareCoord[0]+j*(bufferSize+squareSize)+squareSize//2 - text.get_width() // 2, squareCoord[1]+i*(bufferSize+squareSize)+squareSize//2 - text.get_height() // 2))
-
-    if gameEnd:
-        s = pygame.Surface((boardSizeX,boardSizeY))
-        s.set_alpha(150)
-        s.fill((boardColor))
-        win.blit(s, (squareCoord[0]-bufferSize,squareCoord[1]-bufferSize))
         font = pygame.font.SysFont(fontFace2, 48)
-        text = font.render("Oops! Game Over!", True, scheme[2][1])
-        win.blit(text,(pygame.display.get_surface().get_size()[0]//2-text.get_width()//2,pygame.display.get_surface().get_size()[1]//2-text.get_height()//2))
+        text = font.render("Score: "+str(score), True, boardColor)
+        win.blit(text,(squareCoord[0]-bufferSize,squareCoord[1]-bufferSize-text.get_height()))
+
+        keys = pygame.key.get_pressed()
+
+        if not keys[pygame.K_UP]:
+            upKey = False
+        if not keys[pygame.K_DOWN]:
+            downKey = False
+        if not keys[pygame.K_LEFT]:
+            leftKey = False
+        if not keys[pygame.K_RIGHT]:
+            rightKey = False
+
+        if keys[pygame.K_UP] and not upKey:
+            move(0, board)
+            upKey = True
+        if keys[pygame.K_DOWN] and not downKey:
+            move(1, board)
+            downKey = True
+        if keys[pygame.K_LEFT] and not leftKey:
+            move(2, board)
+            leftKey = True
+        if keys[pygame.K_RIGHT] and not rightKey:
+            move(3, board)
+            rightKey = True
+
+        if keys[pygame.K_SPACE]:
+            move(0, board)
+            move(3, board)
+            move(1, board)
+            move(2, board)
+
+        for i in range(height):
+            for j in range(width):
+                if board[i,j] != -1:
+                    pygame.draw.rect(win, boardColor, (squareCoord[0]-bufferSize+j*(bufferSize+squareSize),squareCoord[1]-bufferSize+i*(bufferSize+squareSize),bufferSize*2+squareSize,bufferSize*2+squareSize))
+
+        for i in range(height):
+            for j in range(width):
+                if board[i,j] == 0:
+                    blockColor = squareColor
+                if board[i,j] == -1:
+                    blockColor = (255,255,255)
+                if board[i,j] == -2:
+                    blockColor = scheme[2][1]
+                pygame.draw.rect(win, blockColor, (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
+
+        for i in range(height):
+            for j in range(width):
+                if board[i,j] != 0 and board[i,j] != -1 and board[i,j] != -2:
+                    if board[i,j] == 1:
+                        blockColor = scheme[board[i,j]+1][0]
+                        textColor = scheme[board[i,j]+1][1]
+                    if board[i,j] == 2:
+                        blockColor = scheme[board[i,j]+1][0]
+                        textColor = scheme[board[i,j]+1][1]
+                    if board[i,j] == 3:
+                        blockColor = scheme[board[i,j]+1][0]
+                        textColor = scheme[board[i,j]+1][1]
+                    if board[i,j] == 4:
+                        blockColor = scheme[board[i,j]+1][0]
+                        textColor = scheme[board[i,j]+1][1]
+                    if board[i,j] == 5:
+                        blockColor = scheme[board[i,j]+1][0]
+                        textColor = scheme[board[i,j]+1][1]
+                    if board[i,j] == 6:
+                        blockColor = scheme[board[i,j]+1][0]
+                        textColor = scheme[board[i,j]+1][1]
+                    if board[i,j] == 7:
+                        blockColor = scheme[board[i,j]+1][0]
+                        textColor = scheme[board[i,j]+1][1]
+                    if board[i,j] == 8:
+                        blockColor = scheme[board[i,j]+1][0]
+                        textColor = scheme[board[i,j]+1][1]
+                    if board[i,j] == 9:
+                        blockColor = scheme[board[i,j]+1][0]
+                        textColor = scheme[board[i,j]+1][1]
+                    if board[i,j] == 10:
+                        blockColor = scheme[board[i,j]+1][0]
+                        textColor = scheme[board[i,j]+1][1]
+                    if board[i,j] == 11:
+                        blockColor = scheme[board[i,j]+1][0]
+                        textColor = scheme[board[i,j]+1][1]
+                    if board[i,j] > 11:
+                        blockColor = scheme[-1][0]
+                        textColor = scheme[-1][1]
+                    pygame.draw.rect(win, blockColor, (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
+                    font = pygame.font.SysFont(fontFace1, int(squareSize/(1+(len(str(2**board[i,j]))*.5))))
+                    text = font.render(str(2**board[i,j]), True, textColor)
+                    win.blit(text,(squareCoord[0]+j*(bufferSize+squareSize)+squareSize//2 - text.get_width() // 2, squareCoord[1]+i*(bufferSize+squareSize)+squareSize//2 - text.get_height() // 2))
+
+        if gameEnd:
+            s = pygame.Surface((boardSizeX,boardSizeY))
+            s.set_alpha(150)
+            s.fill((boardColor))
+            win.blit(s, (squareCoord[0]-bufferSize,squareCoord[1]-bufferSize))
+            font = pygame.font.SysFont(fontFace2, 48)
+            text = font.render("Oops! Game Over!", True, scheme[2][1])
+            win.blit(text,(displaySize[0]//2-text.get_width()//2,displaySize[1]//2-text.get_height()//2))
 
     pygame.display.update()
 
