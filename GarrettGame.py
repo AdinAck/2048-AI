@@ -1,9 +1,11 @@
+import os
 import numpy as np
 import random
 import pygame
+import math
 
-width = 2
-height = 2
+width = 16
+height = 8
 
 board = np.zeros((height,width),int)
 score = 0
@@ -28,8 +30,8 @@ genRandomBlock(board)
 genRandomBlock(board)
 
 # print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-print(board)
-print("Score: {0}".format(score))
+# print(board)
+# print("Score: {0}".format(score))
 
 def move(direction, board):
     global score
@@ -135,8 +137,8 @@ def move(direction, board):
     if not np.array_equal(preboard,board):
         zeroList = genRandomBlock(board)
         # print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-        print(board)
-        print("Score: {0}".format(score))
+        # print(board)
+        # print("Score: {0}".format(score))
         # if np.size(zeroList,0) == 1:
         #     gameEnd = True
         #     for i in range(0,height):
@@ -156,14 +158,12 @@ def move(direction, board):
 
 pygame.init()
 
-winSizeX = 512
-bufferSize = winSizeX//width//12
-squareCoord = bufferSize,bufferSize
-squareSize = (winSizeX-((width+1)*bufferSize))//width
-winSizeY = bufferSize*(height+1)+(squareSize*height)
-
-win = pygame.display.set_mode((winSizeX,winSizeY))
+win = pygame.display.set_mode(size=(1280,720),flags=pygame.RESIZABLE)
 pygame.display.set_caption("2048")
+
+fontFace1 = "roboto"
+
+boardColor = (187,173,160)
 
 run = True
 while run:
@@ -171,11 +171,26 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+        if event.type == pygame.VIDEORESIZE:
+            win = pygame.display.set_mode(size=(event.w,event.h),flags=pygame.RESIZABLE)
 
-    win.fill((187,173,160))
+    boardSizeX = int((pygame.display.get_surface().get_size()[0]**2+pygame.display.get_surface().get_size()[1]**2)**(1/2)*(width/height))//3
+    bufferSize = boardSizeX//width//12
+    boardSizeX = boardSizeX-bufferSize
+    squareSize = (boardSizeX-(bufferSize*(width+1)))//width
+    boardSizeX = squareSize*width+bufferSize*(width+1)
+    boardSizeY = bufferSize*(height+1)+(squareSize*height)
+    squareCoord = pygame.display.get_surface().get_size()[0]//2-boardSizeX//2+bufferSize,pygame.display.get_surface().get_size()[1]//2-boardSizeY//2+bufferSize
+
+    win.fill((255,255,255))
+    pygame.draw.rect(win, boardColor, (squareCoord[0]-bufferSize,squareCoord[1]-bufferSize,boardSizeX,boardSizeY))
+
+    font = pygame.font.SysFont(fontFace1, int((pygame.display.get_surface().get_size()[0]**2+pygame.display.get_surface().get_size()[1]**2)**(1/2))//64)
+    text = font.render("Score: "+str(score), True, (187,173,160))
+    win.blit(text,(squareCoord[0]-bufferSize,squareCoord[1]-bufferSize-text.get_height()))
+
 
     keys = pygame.key.get_pressed()
-
 
     if not keys[pygame.K_UP]:
         upKey = False
@@ -207,13 +222,47 @@ while run:
         for j in range(width):
             if board[i,j] != 0:
                 if board[i,j] == 1:
-                    color = (255,0,0)
+                    blockColor = (238,228,218)
+                    textColor = (54, 53, 55)
                 if board[i,j] == 2:
-                    color = (0,0,255)
+                    blockColor = (236,224,202)
+                    textColor = (54, 53, 55)
                 if board[i,j] == 3:
-                    color = (0,255,0)
-                pygame.draw.rect(win, color, (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
+                    blockColor = (243,176,123)
+                    textColor = (253, 253, 255)
+                if board[i,j] == 4:
+                    blockColor = (245,149,99)
+                    textColor = (253, 253, 255)
+                if board[i,j] == 5:
+                    blockColor = (239,128,94)
+                    textColor = (253, 253, 255)
+                if board[i,j] == 6:
+                    blockColor = (247,93,57)
+                    textColor = (253, 253, 255)
+                if board[i,j] == 7:
+                    blockColor = (236,207,113)
+                    textColor = (253, 253, 255)
+                if board[i,j] == 8:
+                    blockColor = (168,227,20)
+                    textColor = (253, 253, 255)
+                if board[i,j] == 9:
+                    blockColor = (43,168,74)
+                    textColor = (253, 253, 255)
+                if board[i,j] == 10:
+                    blockColor = (15,139,141)
+                    textColor = (253, 253, 255)
+                if board[i,j] == 11:
+                    blockColor = (41,50,65)
+                    textColor = (253, 253, 255)
+                if board[i,j] > 11:
+                    blockColor = (4,15,15)
+                    textColor = (253, 253, 255)
+                pygame.draw.rect(win, blockColor, (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
+                font = pygame.font.SysFont(fontFace1, int(squareSize/(1+(len(str(2**board[i,j]))*.5))))
+                text = font.render(str(2**board[i,j]), True, textColor)
+                win.blit(text,(squareCoord[0]+j*(bufferSize+squareSize)+squareSize//2 - text.get_width() // 2, squareCoord[1]+i*(bufferSize+squareSize)+squareSize//2 - text.get_height() // 2))
 
     pygame.display.update()
 
 pygame.quit()
+exit()
