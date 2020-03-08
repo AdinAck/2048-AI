@@ -207,8 +207,6 @@ while run:
     text = font.render("Score: "+str(score), True, boardColor)
     win.blit(text,(squareCoord[0]-bufferSize,squareCoord[1]-bufferSize-text.get_height()))
 
-
-
     keys = pygame.key.get_pressed()
 
     if not keys[pygame.K_UP]:
