@@ -56,7 +56,7 @@ def move(direction, board):
                         lastNumIndex +=1
                         lastNumber = board[lastNumIndex,x]
                     else:
-                        if  lastNumIndex+1 < y and lastNumIndex != height-1:
+                        if  lastNumIndex+1 < y:
                             board[lastNumIndex+1,x] = board[y,x]
                             board[y,x] = 0
                         lastNumIndex +=1
@@ -80,7 +80,7 @@ def move(direction, board):
                         lastNumIndex -=1
                         lastNumber = board[lastNumIndex,x]
                     else:
-                        if lastNumIndex-1 > y and  lastNumIndex != height-1:
+                        if lastNumIndex-1 > y:
                             board[lastNumIndex-1,x] = board[y,x]
                             board[y,x] = 0
                         lastNumIndex -=1
@@ -104,7 +104,7 @@ def move(direction, board):
                         lastNumIndex +=1
                         lastNumber = board[y,lastNumIndex]
                     else:
-                        if  lastNumIndex+1 < x and lastNumIndex != width-1:
+                        if  lastNumIndex+1 < x:
                             board[y,lastNumIndex+1] = board[y,x]
                             board[y,x] = 0
                         lastNumIndex +=1
@@ -128,7 +128,7 @@ def move(direction, board):
                         lastNumIndex -=1
                         lastNumber = board[y,lastNumIndex]
                     else:
-                        if  lastNumIndex-1 > x and lastNumIndex != width-1:
+                        if  lastNumIndex-1 > x:
                             board[y,lastNumIndex-1] = board[y,x]
                             board[y,x] = 0
                         lastNumIndex -=1
