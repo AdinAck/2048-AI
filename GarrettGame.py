@@ -3,15 +3,15 @@ import numpy as np
 import random
 import pygame
 
-width = 32
-height = 32
+width = 6
+height = 5
 
-board = np.zeros((height,width),int)
-# board = np.array([[0,0,0,0,0,0],
-#                   [0,0,0,0,0,0],
-#                   [-1,-1,-1,0,-2,0],
-#                   [-1,-1,-1,0,0,0],
-#                   [-1,-1,-1,0,0,0]])
+# board = np.zeros((height,width),int)
+board = np.array([[0,0,0,0,0,0],
+                  [0,0,0,0,0,0],
+                  [-1,-1,-1,0,-2,0],
+                  [-1,-1,-1,0,0,0],
+                  [-1,-1,-1,0,0,0]])
 score = 0
 gameEnd = False
 
@@ -219,13 +219,15 @@ while run:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 4:
                 zoom = 2
-                squareCoord = int(zoom*squareCoord[0])-pygame.mouse.get_pos()[0],int(zoom*squareCoord[1])-pygame.mouse.get_pos()[1]
+                # squareCoord = int(zoom*squareCoord[0])-pygame.mouse.get_pos()[0],int(zoom*squareCoord[1])-pygame.mouse.get_pos()[1]
+                squareCoord = int(zoom*squareCoord[0])-displaySize[0]//2,int(zoom*squareCoord[1])-displaySize[1]//2
                 boardSizeX = boardSizeX*zoom
                 squareSize = squareSize*zoom
                 bufferSize = bufferSize*zoom
             if event.button == 5:
                 zoom = .5
-                squareCoord = int(zoom*squareCoord[0])+pygame.mouse.get_pos()[0]//2,int(zoom*squareCoord[1])+pygame.mouse.get_pos()[1]//2
+                # squareCoord = int(zoom*squareCoord[0])+pygame.mouse.get_pos()[0]//2,int(zoom*squareCoord[1])+pygame.mouse.get_pos()[1]//2
+                squareCoord = int(zoom*squareCoord[0])+displaySize[0]//4,int(zoom*squareCoord[1])+displaySize[1]//4
                 boardSizeX = boardSizeX*zoom
                 squareSize = squareSize*zoom
                 bufferSize = bufferSize*zoom
