@@ -3,15 +3,15 @@ import numpy as np
 import random
 import pygame
 
-width = 6
-height = 5
+width = 32
+height = 32
 
-# board = np.zeros((height,width),int)
-board = np.array([[0,0,0,0,0,0],
-                  [0,0,0,0,0,0],
-                  [-1,-1,-1,0,-2,0],
-                  [-1,-1,-1,0,0,0],
-                  [-1,-1,-1,0,0,0]])
+board = np.zeros((height,width),int)
+# board = np.array([[0,0,0,0,0,0],
+#                   [0,0,0,0,0,0],
+#                   [-1,-1,-1,0,-2,0],
+#                   [-1,-1,-1,0,0,0],
+#                   [-1,-1,-1,0,0,0]])
 score = 0
 gameEnd = False
 
@@ -162,7 +162,7 @@ pygame.init()
 win = pygame.display.set_mode(size=(1280,720),flags=pygame.RESIZABLE)
 pygame.display.set_caption("2048")
 
-defaultScheme = np.array([["roboto","roboto"],               # Font 1 and 2
+defaultScheme = np.array([["Roboto-Bold.ttf","Roboto-Bold.ttf"],               # Font 1 and 2
                           [(187,173,160),(205,193,179)],     # Board color and square color
                           [(238,228,218),(54, 53, 55)],      # 2 tile block color and text color
                           [(236,224,202),(54, 53, 55)],      # 4 tile block color and text color
@@ -187,6 +187,18 @@ fontFace2 = scheme[0][1]
 boardColor = scheme[1][0]
 squareColor = scheme[1][1]
 
+win = pygame.display.set_mode(size=(1280,720))
+displaySize = pygame.display.get_surface().get_size()
+boardSizeX = int((displaySize[0]**2+displaySize[1]**2)**(1/2)*(width/height)//2.5)
+bufferSize = boardSizeX//width//12
+boardSizeX = boardSizeX-bufferSize
+squareSize = (boardSizeX-(bufferSize*(width+1)))//width
+boardSizeX = squareSize*width+bufferSize*(width+1)
+boardSizeY = bufferSize*(height+1)+(squareSize*height)
+squareCoord = displaySize[0]//2-boardSizeX//2+bufferSize,displaySize[1]//2-boardSizeY//2+bufferSize
+
+zoom = 1
+mouseMove = 0,0
 menu = True
 run = True
 while run:
@@ -196,16 +208,34 @@ while run:
             run = False
         if event.type == pygame.VIDEORESIZE:
             win = pygame.display.set_mode(size=(event.w,event.h),flags=pygame.RESIZABLE)
+            displaySize = pygame.display.get_surface().get_size()
+            boardSizeX = int((displaySize[0]**2+displaySize[1]**2)**(1/2)*(width/height)//2.5)
+            bufferSize = boardSizeX//width//12
+            boardSizeX = boardSizeX-bufferSize
+            squareSize = (boardSizeX-(bufferSize*(width+1)))//width
+            boardSizeX = squareSize*width+bufferSize*(width+1)
+            boardSizeY = bufferSize*(height+1)+(squareSize*height)
+            squareCoord = displaySize[0]//2-boardSizeX//2+bufferSize,displaySize[1]//2-boardSizeY//2+bufferSize
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 4:
+                zoom = 2
+                squareCoord = int(zoom*squareCoord[0])-pygame.mouse.get_pos()[0],int(zoom*squareCoord[1])-pygame.mouse.get_pos()[1]
+                boardSizeX = boardSizeX*zoom
+                squareSize = squareSize*zoom
+                bufferSize = bufferSize*zoom
+            if event.button == 5:
+                zoom = .5
+                squareCoord = int(zoom*squareCoord[0])+pygame.mouse.get_pos()[0]//2,int(zoom*squareCoord[1])+pygame.mouse.get_pos()[1]//2
+                boardSizeX = boardSizeX*zoom
+                squareSize = squareSize*zoom
+                bufferSize = bufferSize*zoom
 
-    displaySize = pygame.display.get_surface().get_size()
 
-    boardSizeX = int((displaySize[0]**2+displaySize[1]**2)**(1/2)*(width/height)//2.5)
-    bufferSize = boardSizeX//width//12
-    boardSizeX = boardSizeX-bufferSize
-    squareSize = (boardSizeX-(bufferSize*(width+1)))//width
-    boardSizeX = squareSize*width+bufferSize*(width+1)
-    boardSizeY = bufferSize*(height+1)+(squareSize*height)
-    squareCoord = displaySize[0]//2-boardSizeX//2+bufferSize,displaySize[1]//2-boardSizeY//2+bufferSize
+
+    mouseMove = pygame.mouse.get_rel()
+    if pygame.mouse.get_pressed()[0]:
+        squareCoord = squareCoord[0]+mouseMove[0],squareCoord[1]+mouseMove[1]
+
 
     win.fill((255,255,255))
 
@@ -219,18 +249,16 @@ while run:
         else:
             button1Color = boardColor
         pygame.draw.rect(win, button1Color, (button1Pos[0]-button1Size[0]//2,button1Pos[1]-button1Size[1]//2,button1Size[0],button1Size[1]))
-        font = pygame.font.SysFont(fontFace2, 32)
+        font = pygame.font.Font(fontFace2, 32)
         text = font.render("PLAY", True, scheme[2][1])
         win.blit(text,(button1Pos[0]-text.get_width()//2,button1Pos[1]-text.get_height()//2))
 
-        font = pygame.font.SysFont(fontFace2, 60)
+        font = pygame.font.Font(fontFace2, 60)
         text = font.render("SUPER 2048", True, scheme[2][1])
         win.blit(text,(displaySize[0]//2-text.get_width()//2,displaySize[1]//(3)-text.get_height()//2))
 
     if not menu:
-        # pygame.draw.rect(win, boardColor, (squareCoord[0]-bufferSize,squareCoord[1]-bufferSize,boardSizeX,boardSizeY))
-
-        font = pygame.font.SysFont(fontFace2, 48)
+        font = pygame.font.Font(fontFace2, 48)
         text = font.render("Score: "+str(score), True, boardColor)
         win.blit(text,(squareCoord[0]-bufferSize,squareCoord[1]-bufferSize-text.get_height()))
 
@@ -322,7 +350,7 @@ while run:
                         blockColor = scheme[-1][0]
                         textColor = scheme[-1][1]
                     pygame.draw.rect(win, blockColor, (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
-                    font = pygame.font.SysFont(fontFace1, int(squareSize/(1+(len(str(2**board[i,j]))*.5))))
+                    font = pygame.font.Font(fontFace1, int(squareSize/(1+(len(str(2**board[i,j]))*.5))))
                     text = font.render(str(2**board[i,j]), True, textColor)
                     win.blit(text,(squareCoord[0]+j*(bufferSize+squareSize)+squareSize//2 - text.get_width() // 2, squareCoord[1]+i*(bufferSize+squareSize)+squareSize//2 - text.get_height() // 2))
 
@@ -331,7 +359,7 @@ while run:
             s.set_alpha(150)
             s.fill((boardColor))
             win.blit(s, (squareCoord[0]-bufferSize,squareCoord[1]-bufferSize))
-            font = pygame.font.SysFont(fontFace2, 48)
+            font = pygame.font.Font(fontFace2, 48)
             text = font.render("Oops! Game Over!", True, scheme[2][1])
             win.blit(text,(displaySize[0]//2-text.get_width()//2,displaySize[1]//2-text.get_height()//(1.8/2)))
 
@@ -349,7 +377,7 @@ while run:
             else:
                 button1Color = boardColor
             pygame.draw.rect(win, button1Color, (button1Pos[0]-button1Size[0]//2,button1Pos[1]-button1Size[1]//2,button1Size[0],button1Size[1]))
-            font = pygame.font.SysFont(fontFace2, 32)
+            font = pygame.font.Font(fontFace2, 32)
             text = font.render("PLAY AGAIN", True, scheme[2][1])
             win.blit(text,(button1Pos[0]-text.get_width()//2,button1Pos[1]-text.get_height()//2))
 
@@ -367,7 +395,7 @@ while run:
             else:
                 button1Color = boardColor
             pygame.draw.rect(win, button1Color, (button2Pos[0]-button2Size[0]//2,button2Pos[1]-button2Size[1]//2,button2Size[0],button2Size[1]))
-            font = pygame.font.SysFont(fontFace2, 32)
+            font = pygame.font.Font(fontFace2, 32)
             text = font.render("MAIN MENU", True, scheme[2][1])
             win.blit(text,(button2Pos[0]-text.get_width()//2,button2Pos[1]-text.get_height()//2))
 
