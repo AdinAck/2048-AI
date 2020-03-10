@@ -10,8 +10,8 @@ height = 5
 board = np.array([[0,0,0,0,0,0],
                   [0,0,0,0,0,0],
                   [-1,-1,-1,0,-2,0],
-                  [-1,-1,-1,1,1,0],
-                  [-1,-1,-1,0,0,0]])
+                  [-1,-1,-1,0,0,0],
+                  [-1,-1,-1,0,2,0]])
 score = 0
 gameEnd = False
 
@@ -65,6 +65,9 @@ def move(direction, board):
                             board[y,x] = 0
                         lastNumIndex +=1
                         lastNumber = board[lastNumIndex,x]
+                elif board[y,x] == -2 or board[y,x] == -1:
+                    lastNumIndex = y
+                    lastNumber = board[lastNumIndex,x]
     if direction == 1: #DOWN
         xRange = np.arange(0,width)
         for x in xRange:
@@ -89,6 +92,9 @@ def move(direction, board):
                             board[y,x] = 0
                         lastNumIndex -=1
                         lastNumber = board[lastNumIndex,x]
+                elif board[y,x] == -2 or board[y,x] == -1:
+                    lastNumIndex = y
+                    lastNumber = board[lastNumIndex,x]
     if direction == 2: #LEFT
         yRange = np.arange(0,height)
         for y in yRange:
@@ -113,6 +119,9 @@ def move(direction, board):
                             board[y,x] = 0
                         lastNumIndex +=1
                         lastNumber = board[y,lastNumIndex]
+                elif board[y,x] == -2 or board[y,x] == -1:
+                    lastNumIndex = x
+                    lastNumber = board[y,lastNumIndex]
     if direction == 3: #RIGHT
         yRange = np.arange(0,height)
         for y in yRange:
@@ -137,6 +146,9 @@ def move(direction, board):
                             board[y,x] = 0
                         lastNumIndex -=1
                         lastNumber = board[y,lastNumIndex]
+                elif board[y,x] == -2 or board[y,x] == -1:
+                    lastNumIndex = x
+                    lastNumber = board[y,lastNumIndex]
 
     if not np.array_equal(preboard,board):
         zeroList = genRandomBlock(board)
