@@ -10,7 +10,7 @@ height = 5
 board = np.array([[0,0,0,0,0,0],
                   [0,0,0,0,0,0],
                   [-1,-1,-1,0,-2,0],
-                  [-1,-1,-1,0,0,0],
+                  [-1,-1,-1,1,1,0],
                   [-1,-1,-1,0,0,0]])
 score = 0
 gameEnd = False
@@ -47,7 +47,6 @@ def move(direction, board):
             lastNumber = board[0,x]
             lastNumIndex = 0
             yRange = np.arange(1,height)
-
             for y in yRange:
                 if board[y,x] != 0 and board[y,x] != -1 and board[y,x] != -2:
                     if lastNumber == 0:
