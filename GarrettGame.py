@@ -159,7 +159,7 @@ def move(direction, board):
             gameTest = True
             for y in range(0,height):
                 for x in range(0,width):
-                    if board[y,x] != -1:
+                    if board[y,x] != -1 or board[y,x] != -2:
                         if x != width-1:
                             if board[y,x] == board[y,x+1]:
                                 gameTest = False
