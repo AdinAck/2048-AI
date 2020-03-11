@@ -483,6 +483,8 @@ while run:
                 textColor = scheme[2][1]
                 if pygame.mouse.get_pressed()[0]:
                     menu = True
+                    mainMenu = True
+                    gameEnd = False
             else:
                 buttonColor = scheme[2][1]
                 textColor = (255,255,255)
