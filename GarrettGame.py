@@ -3,19 +3,6 @@ import numpy as np
 import random
 import pygame
 
-width = 6
-height = 6
-
-# board = np.zeros((height,width),int)
-board = np.array([[0,0,0,0,0,0],
-                  [0,0,0,0,0,0],
-                  [0,0,-1,-1,0,0],
-                  [0,0,-1,-1,0,0],
-                  [0,0,0,0,0,0],
-                  [0,0,0,0,0,0]])
-score = 0
-gameEnd = False
-
 def genRandomBlock(board):
     zeroList = np.array([])
     for i in range(height):
@@ -30,13 +17,6 @@ def genRandomBlock(board):
         print("This should not happen, attempted to place random block in board with no zeros?")
 
     return zeroList
-
-genRandomBlock(board)
-genRandomBlock(board)
-
-# print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-# print(board)
-# print("Score: {0}".format(score))
 
 def move(direction, board):
     global gameEnd
@@ -170,6 +150,18 @@ def move(direction, board):
             if gameTest:
                 gameEnd = True
 
+def loadBoardCache():
+    try:
+        return np.load("boardCache.npy")
+    except:
+        print("Unable to load \"boardCache.npy\". Loading defaults...")
+        return np.zeros((32,32),int)-1
+
+board = loadBoardCache()
+
+width = np.size(board,1)
+height = np.size(board, 0)
+
 pygame.init()
 
 win = pygame.display.set_mode(size=(1280,720),flags=pygame.RESIZABLE)
@@ -188,7 +180,10 @@ defaultScheme = np.array([["Roboto-Bold.ttf","Roboto-Bold.ttf"],               #
                           [(43,168,74),(253, 253, 255)],
                           [(15,139,141),(253, 253, 255)],
                           [(41,50,65),(253, 253, 255)],
-                          [(4,15,15),(253, 253, 255)]])
+                          [(4,15,15),(253, 253, 255)],
+                          [(255,255,255),(10,10,10)],
+                          [(20,20,20),(255,255,255)],
+                          [(255,255,0),(255,0,0)]])
 
 schemeList = np.array([defaultScheme])
 
@@ -200,6 +195,8 @@ fontFace2 = scheme[0][1]
 boardColor = scheme[1][0]
 squareColor = scheme[1][1]
 
+backgroundColor = scheme[14][0]
+
 win = pygame.display.set_mode(size=(1280,720))
 displaySize = pygame.display.get_surface().get_size()
 boardSizeX = int((displaySize[0]**2+displaySize[1]**2)**(1/2)*(width/height)//2.5)
@@ -210,11 +207,18 @@ boardSizeX = squareSize*width+bufferSize*(width+1)
 boardSizeY = bufferSize*(height+1)+(squareSize*height)
 squareCoord = displaySize[0]//2-boardSizeX//2+bufferSize,displaySize[1]//2-boardSizeY//2+bufferSize
 
+button1Hover = False
+reset = False
+gameStart = False
+score = 0
+gameEnd = False
 zoom = 1
 mouseMove = 0,0
 menu = True
 mainMenu = True
 playMenu = False
+editMenu = False
+transition = False
 run = True
 while run:
     # Close window when X is clicked
@@ -247,55 +251,128 @@ while run:
                 squareSize = squareSize*zoom
                 bufferSize = bufferSize*zoom
 
-    mouseMove = pygame.mouse.get_rel()
-    if pygame.mouse.get_pressed()[0] and not gameEnd:
-        squareCoord = squareCoord[0]+mouseMove[0],squareCoord[1]+mouseMove[1]
-
-    win.fill((255,255,255))
+    win.fill(backgroundColor)
 
     keys = pygame.key.get_pressed()
 
+    if not menu or editMenu:
+        mouseMove = pygame.mouse.get_rel()
+        if pygame.mouse.get_pressed()[1] and not gameEnd:
+            squareCoord = squareCoord[0]+mouseMove[0],squareCoord[1]+mouseMove[1]
+
     if menu:
         if mainMenu:
-            button1Size = 100,50
-            button1Pos = displaySize[0]//2,displaySize[1]//(3/2)
-            if pygame.mouse.get_pos()[0] <= button1Pos[0]+button1Size[0]//2 and pygame.mouse.get_pos()[0] >= button1Pos[0]-button1Size[0]//2 and pygame.mouse.get_pos()[1] <= button1Pos[1]+button1Size[1]//2 and pygame.mouse.get_pos()[1] >= button1Pos[1]-button1Size[1]//2:
-                button1Color = scheme[1][1]
-                if pygame.mouse.get_pressed()[0]:
+            buttonSize = 100,50
+            buttonPos = displaySize[0]//2,displaySize[1]//(3/2)
+            if pygame.mouse.get_pos()[0] <= buttonPos[0]+buttonSize[0]//2 and pygame.mouse.get_pos()[0] >= buttonPos[0]-buttonSize[0]//2 and pygame.mouse.get_pos()[1] <= buttonPos[1]+buttonSize[1]//2 and pygame.mouse.get_pos()[1] >= buttonPos[1]-buttonSize[1]//2:
+                buttonColor = scheme[1][1]
+                if pygame.mouse.get_pressed()[0] and not transition:
+                    transition = True
                     playMenu = True
+                    mainMenu = False
             else:
-                button1Color = boardColor
-            pygame.draw.rect(win, button1Color, (button1Pos[0]-button1Size[0]//2,button1Pos[1]-button1Size[1]//2,button1Size[0],button1Size[1]))
+                buttonColor = boardColor
+            pygame.draw.rect(win, buttonColor, (buttonPos[0]-buttonSize[0]//2,buttonPos[1]-buttonSize[1]//2,buttonSize[0],buttonSize[1]))
             font = pygame.font.Font(fontFace2, 32)
             text = font.render("PLAY", True, scheme[2][1])
-            win.blit(text,(button1Pos[0]-text.get_width()//2,button1Pos[1]-text.get_height()//2))
+            win.blit(text,(buttonPos[0]-text.get_width()//2,buttonPos[1]-text.get_height()//2))
 
             font = pygame.font.Font(fontFace2, 60)
             text = font.render("SUPER 2048", True, scheme[2][1])
             win.blit(text,(displaySize[0]//2-text.get_width()//2,displaySize[1]//(3)-text.get_height()//2))
 
-        if playMenu and not pygame.mouse.get_pressed()[0]:
-            mainMenu = False
-        if playMenu and not mainMenu:
+        if playMenu:
+            backgroundColor = scheme[14][0]
             if keys[pygame.K_ESCAPE]:
                 mainMenu = True
                 playMenu = False
 
-            button1Size = 120,50
-            button1Pos = displaySize[0]//2,displaySize[1]//(3/2)
-            if pygame.mouse.get_pos()[0] <= button1Pos[0]+button1Size[0]//2 and pygame.mouse.get_pos()[0] >= button1Pos[0]-button1Size[0]//2 and pygame.mouse.get_pos()[1] <= button1Pos[1]+button1Size[1]//2 and pygame.mouse.get_pos()[1] >= button1Pos[1]-button1Size[1]//2:
-                button1Color = scheme[1][1]
-                if pygame.mouse.get_pressed()[0]:
+            buttonSize = 120,50
+            buttonPos = displaySize[0]//2,displaySize[1]//(3/2)
+            if pygame.mouse.get_pos()[0] <= buttonPos[0]+buttonSize[0]//2 and pygame.mouse.get_pos()[0] >= buttonPos[0]-buttonSize[0]//2 and pygame.mouse.get_pos()[1] <= buttonPos[1]+buttonSize[1]//2 and pygame.mouse.get_pos()[1] >= buttonPos[1]-buttonSize[1]//2:
+                buttonColor = scheme[1][1]
+                if pygame.mouse.get_pressed()[0] and not transition:
+                    transition = True
                     menu = False
                     playMenu = False
+                    if reset:
+                        gameStart = True
+                        reset = False
             else:
-                button1Color = boardColor
-            pygame.draw.rect(win, button1Color, (button1Pos[0]-button1Size[0]//2,button1Pos[1]-button1Size[1]//2,button1Size[0],button1Size[1]))
+                buttonColor = boardColor
+            pygame.draw.rect(win, buttonColor, (buttonPos[0]-buttonSize[0]//2,buttonPos[1]-buttonSize[1]//2,buttonSize[0],buttonSize[1]))
             font = pygame.font.Font(fontFace2, 32)
             text = font.render("START", True, scheme[2][1])
-            win.blit(text,(button1Pos[0]-text.get_width()//2,button1Pos[1]-text.get_height()//2))
+            win.blit(text,(buttonPos[0]-text.get_width()//2,buttonPos[1]-text.get_height()//2))
+
+            buttonSize = 200,50
+            buttonPos = displaySize[0]//2,displaySize[1]//2
+            if pygame.mouse.get_pos()[0] <= buttonPos[0]+buttonSize[0]//2 and pygame.mouse.get_pos()[0] >= buttonPos[0]-buttonSize[0]//2 and pygame.mouse.get_pos()[1] <= buttonPos[1]+buttonSize[1]//2 and pygame.mouse.get_pos()[1] >= buttonPos[1]-buttonSize[1]//2:
+                buttonColor = scheme[1][1]
+                if pygame.mouse.get_pressed()[0] and not transition:
+                    transition = True
+                    editMenu = True
+                    playMenu = False
+            else:
+                buttonColor = boardColor
+            pygame.draw.rect(win, buttonColor, (buttonPos[0]-buttonSize[0]//2,buttonPos[1]-buttonSize[1]//2,buttonSize[0],buttonSize[1]))
+            font = pygame.font.Font(fontFace2, 32)
+            text = font.render("EDIT BOARD", True, scheme[2][1])
+            win.blit(text,(buttonPos[0]-text.get_width()//2,buttonPos[1]-text.get_height()//2))
+
+        if editMenu:
+            if transition:
+                boardTemp = loadBoardCache()
+            backgroundColor = scheme[14][1]
+            for i in range(32):
+                for j in range(32):
+                    if boardTemp[i,j] == 0:
+                        pygame.draw.rect(win, scheme[15][1], (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
+                    if boardTemp[i,j] == -1:
+                        pygame.draw.rect(win, scheme[15][0], (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
+                    if boardTemp[i,j] == -2:
+                        pygame.draw.rect(win, scheme[16][0], (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
+            if not button1Hover:
+                for i in range(32):
+                    for j in range(32):
+                        if pygame.mouse.get_pos()[0] >= squareCoord[0]+j*(bufferSize+squareSize) and pygame.mouse.get_pos()[0] <= squareCoord[0]+j*(bufferSize+squareSize)+squareSize:
+                            if pygame.mouse.get_pos()[1] >= squareCoord[1]+i*(bufferSize+squareSize) and pygame.mouse.get_pos()[1] <= squareCoord[1]+i*(bufferSize+squareSize)+squareSize:
+                                if pygame.mouse.get_pressed()[0]:
+                                    boardTemp[i,j] = 0
+                                if pygame.mouse.get_pressed()[2]:
+                                    boardTemp[i,j] = -1
+
+            buttonSize = 100,50
+            buttonPos = int(displaySize[0]*(7/8)),int(displaySize[1]*(7/8))
+            if pygame.mouse.get_pos()[0] <= buttonPos[0]+buttonSize[0]//2 and pygame.mouse.get_pos()[0] >= buttonPos[0]-buttonSize[0]//2 and pygame.mouse.get_pos()[1] <= buttonPos[1]+buttonSize[1]//2 and pygame.mouse.get_pos()[1] >= buttonPos[1]-buttonSize[1]//2:
+                buttonColor = scheme[16][0]
+                button1Hover = True
+                if pygame.mouse.get_pressed()[0] and not transition:
+                    transition = True
+                    np.save("boardCache.npy",boardTemp)
+                    board = boardTemp
+                    win.fill(backgroundColor)
+                    playMenu = True
+                    editMenu = False
+                    reset = True
+            else:
+                buttonColor = scheme[15][1]
+                button1Hover = False
+            pygame.draw.rect(win, buttonColor, (buttonPos[0]-buttonSize[0]//2,buttonPos[1]-buttonSize[1]//2,buttonSize[0],buttonSize[1]))
+            font = pygame.font.Font(fontFace2, 32)
+            text = font.render("DONE", True, scheme[14][1])
+            win.blit(text,(buttonPos[0]-text.get_width()//2,buttonPos[1]-text.get_height()//2))
+
+    if not pygame.mouse.get_pressed()[0] and transition:
+        transition = False
 
     if not menu:
+        if transition and gameStart:
+            score = 0
+            gameEnd = False
+            genRandomBlock(board)
+            genRandomBlock(board)
+            gameStart = False
         font = pygame.font.Font(fontFace2, 48)
         text = font.render("Score: "+str(score), True, boardColor)
         win.blit(text,(squareCoord[0]-bufferSize,squareCoord[1]-bufferSize-text.get_height()))
@@ -350,42 +427,12 @@ while run:
         for i in range(height):
             for j in range(width):
                 if board[i,j] != 0 and board[i,j] != -1 and board[i,j] != -2:
-                    if board[i,j] == 1:
-                        blockColor = scheme[board[i,j]+1][0]
-                        textColor = scheme[board[i,j]+1][1]
-                    if board[i,j] == 2:
-                        blockColor = scheme[board[i,j]+1][0]
-                        textColor = scheme[board[i,j]+1][1]
-                    if board[i,j] == 3:
-                        blockColor = scheme[board[i,j]+1][0]
-                        textColor = scheme[board[i,j]+1][1]
-                    if board[i,j] == 4:
-                        blockColor = scheme[board[i,j]+1][0]
-                        textColor = scheme[board[i,j]+1][1]
-                    if board[i,j] == 5:
-                        blockColor = scheme[board[i,j]+1][0]
-                        textColor = scheme[board[i,j]+1][1]
-                    if board[i,j] == 6:
-                        blockColor = scheme[board[i,j]+1][0]
-                        textColor = scheme[board[i,j]+1][1]
-                    if board[i,j] == 7:
-                        blockColor = scheme[board[i,j]+1][0]
-                        textColor = scheme[board[i,j]+1][1]
-                    if board[i,j] == 8:
-                        blockColor = scheme[board[i,j]+1][0]
-                        textColor = scheme[board[i,j]+1][1]
-                    if board[i,j] == 9:
-                        blockColor = scheme[board[i,j]+1][0]
-                        textColor = scheme[board[i,j]+1][1]
-                    if board[i,j] == 10:
-                        blockColor = scheme[board[i,j]+1][0]
-                        textColor = scheme[board[i,j]+1][1]
-                    if board[i,j] == 11:
+                    if board[i,j] <= 11:
                         blockColor = scheme[board[i,j]+1][0]
                         textColor = scheme[board[i,j]+1][1]
                     if board[i,j] > 11:
-                        blockColor = scheme[-1][0]
-                        textColor = scheme[-1][1]
+                        blockColor = scheme[13][0]
+                        textColor = scheme[13][1]
                     pygame.draw.rect(win, blockColor, (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
                     font = pygame.font.Font(fontFace1, int(squareSize/(1+(len(str(2**board[i,j]))*.5))))
                     text = font.render(str(2**board[i,j]), True, textColor)
@@ -409,45 +456,40 @@ while run:
             text = font.render("Oops! Game Over!", True, scheme[2][1])
             win.blit(text,(displaySize[0]//2-text.get_width()//2,displaySize[1]//2-text.get_height()//(1.8/2)))
 
-            button1Size = 200,50
-            button1Pos = displaySize[0]//2+button1Size[0]//2+20,displaySize[1]//(1.8)
-            if pygame.mouse.get_pos()[0] <= button1Pos[0]+button1Size[0]//2 and pygame.mouse.get_pos()[0] >= button1Pos[0]-button1Size[0]//2 and pygame.mouse.get_pos()[1] <= button1Pos[1]+button1Size[1]//2 and pygame.mouse.get_pos()[1] >= button1Pos[1]-button1Size[1]//2:
-                button1Color = scheme[1][1]
+            buttonSize = 200,50
+            buttonPos = displaySize[0]//2+buttonSize[0]//2+20,displaySize[1]//(1.8)
+            if pygame.mouse.get_pos()[0] <= buttonPos[0]+buttonSize[0]//2 and pygame.mouse.get_pos()[0] >= buttonPos[0]-buttonSize[0]//2 and pygame.mouse.get_pos()[1] <= buttonPos[1]+buttonSize[1]//2 and pygame.mouse.get_pos()[1] >= buttonPos[1]-buttonSize[1]//2:
+                buttonColor = scheme[1][1]
                 textColor = scheme[2][1]
                 if pygame.mouse.get_pressed()[0]:
                     menu = False
                     gameEnd = False
                     score = 0
-                    board = np.zeros((height,width),int)
+                    board = loadBoardCache()
                     genRandomBlock(board)
                     genRandomBlock(board)
             else:
-                button1Color = scheme[2][1]
+                buttonColor = scheme[2][1]
                 textColor = (255,255,255)
-            pygame.draw.rect(win, button1Color, (button1Pos[0]-button1Size[0]//2,button1Pos[1]-button1Size[1]//2,button1Size[0],button1Size[1]))
+            pygame.draw.rect(win, buttonColor, (buttonPos[0]-buttonSize[0]//2,buttonPos[1]-buttonSize[1]//2,buttonSize[0],buttonSize[1]))
             font = pygame.font.Font(fontFace2, 32)
             text = font.render("PLAY AGAIN", True, textColor)
-            win.blit(text,(button1Pos[0]-text.get_width()//2,button1Pos[1]-text.get_height()//2))
+            win.blit(text,(buttonPos[0]-text.get_width()//2,buttonPos[1]-text.get_height()//2))
 
-            button2Size = 200,50
-            button2Pos = displaySize[0]//2-button2Size[0]//2-20,displaySize[1]//(1.8)
-            if pygame.mouse.get_pos()[0] <= button2Pos[0]+button2Size[0]//2 and pygame.mouse.get_pos()[0] >= button2Pos[0]-button2Size[0]//2 and pygame.mouse.get_pos()[1] <= button2Pos[1]+button2Size[1]//2 and pygame.mouse.get_pos()[1] >= button2Pos[1]-button2Size[1]//2:
-                button1Color = scheme[1][1]
+            buttonSize = 200,50
+            buttonPos = displaySize[0]//2-buttonSize[0]//2-20,displaySize[1]//(1.8)
+            if pygame.mouse.get_pos()[0] <= buttonPos[0]+buttonSize[0]//2 and pygame.mouse.get_pos()[0] >= buttonPos[0]-buttonSize[0]//2 and pygame.mouse.get_pos()[1] <= buttonPos[1]+buttonSize[1]//2 and pygame.mouse.get_pos()[1] >= buttonPos[1]-buttonSize[1]//2:
+                buttonColor = scheme[1][1]
                 textColor = scheme[2][1]
                 if pygame.mouse.get_pressed()[0]:
                     menu = True
-                    gameEnd = False
-                    score = 0
-                    board = np.zeros((height,width),int)
-                    genRandomBlock(board)
-                    genRandomBlock(board)
             else:
-                button1Color = scheme[2][1]
+                buttonColor = scheme[2][1]
                 textColor = (255,255,255)
-            pygame.draw.rect(win, button1Color, (button2Pos[0]-button2Size[0]//2,button2Pos[1]-button2Size[1]//2,button2Size[0],button2Size[1]))
+            pygame.draw.rect(win, buttonColor, (buttonPos[0]-buttonSize[0]//2,buttonPos[1]-buttonSize[1]//2,buttonSize[0],buttonSize[1]))
             font = pygame.font.Font(fontFace2, 32)
             text = font.render("MAIN MENU", True, textColor)
-            win.blit(text,(button2Pos[0]-text.get_width()//2,button2Pos[1]-text.get_height()//2))
+            win.blit(text,(buttonPos[0]-text.get_width()//2,buttonPos[1]-text.get_height()//2))
 
     pygame.display.update()
 
