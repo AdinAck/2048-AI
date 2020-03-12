@@ -250,9 +250,9 @@ while run:
                 zoom = .5
                 # squareCoord = int(zoom*squareCoord[0])+pygame.mouse.get_pos()[0]//2,int(zoom*squareCoord[1])+pygame.mouse.get_pos()[1]//2
                 squareCoord = int(zoom*squareCoord[0])+displaySize[0]//4,int(zoom*squareCoord[1])+displaySize[1]//4
-                boardSizeX = boardSizeX*zoom
-                squareSize = squareSize*zoom
-                bufferSize = bufferSize*zoom
+                boardSizeX = int(boardSizeX*zoom)
+                squareSize = int(squareSize*zoom)
+                bufferSize = int(bufferSize*zoom)
 
     win.fill(backgroundColor)
 
@@ -326,7 +326,20 @@ while run:
         if editMenu:
             if transition:
                 boardTemp = loadBoardCache()
+                tool = 0
+                width = np.size(boardTemp,1)
+                height = np.size(boardTemp, 0)
+                displaySize = pygame.display.get_surface().get_size()
+                boardSizeX = int((displaySize[0]**2+displaySize[1]**2)**(1/2)*(width/height)//2.5)
+                bufferSize = boardSizeX//width//12
+                boardSizeX = boardSizeX-bufferSize
+                squareSize = (boardSizeX-(bufferSize*(width+1)))//width
+                boardSizeX = squareSize*width+bufferSize*(width+1)
+                boardSizeY = bufferSize*(height+1)+(squareSize*height)
+                squareCoord = displaySize[0]//2-boardSizeX//2+bufferSize,displaySize[1]//2-boardSizeY//2+bufferSize
             backgroundColor = scheme[14][1]
+            pygame.draw.line(win,scheme[14][0],(squareCoord[0]+(squareSize+bufferSize)*np.size(boardTemp,1)//2-bufferSize//2-1,squareCoord[1]+(squareSize+bufferSize)*np.size(boardTemp,0)),(squareCoord[0]+(squareSize+bufferSize)*np.size(boardTemp,1)//2-bufferSize//2-1,squareCoord[1]),bufferSize//2)
+            pygame.draw.line(win,scheme[14][0],(squareCoord[0],squareCoord[1]+(squareSize+bufferSize)*np.size(boardTemp,0)//2-bufferSize//2-1),(squareCoord[0]+(squareSize+bufferSize)*np.size(boardTemp,1),squareCoord[1]+(squareSize+bufferSize)*np.size(boardTemp,0)//2-bufferSize//2-1),bufferSize//2)
             for i in range(32):
                 for j in range(32):
                     if boardTemp[i,j] == 0:
@@ -409,8 +422,31 @@ while run:
         if transition and gameStart:
             score = 0
             gameEnd = False
+            for i in range(np.size(board,0)):
+                if 0 in board[i]:
+                    break
+            for j in range(np.size(board,0)):
+                if 0 in board[0:np.size(board,0),j]:
+                    break
+            for k in range(np.size(board,0)-1,-1,-1):
+                if 0 in board[k]:
+                    break
+            for l in range(np.size(board,0)-1,0,-1):
+                if 0 in board[0:np.size(board,0),l]:
+                    break
+            board = board[i:k+1,j:l+1]
+            width = np.size(board,1)
+            height = np.size(board, 0)
             genRandomBlock(board)
             genRandomBlock(board)
+            displaySize = pygame.display.get_surface().get_size()
+            boardSizeX = int((displaySize[0]**2+displaySize[1]**2)**(1/2)*(width/height)//2.5)
+            bufferSize = boardSizeX//width//12
+            boardSizeX = boardSizeX-bufferSize
+            squareSize = (boardSizeX-(bufferSize*(width+1)))//width
+            boardSizeX = squareSize*width+bufferSize*(width+1)
+            boardSizeY = bufferSize*(height+1)+(squareSize*height)
+            squareCoord = displaySize[0]//2-boardSizeX//2+bufferSize,displaySize[1]//2-boardSizeY//2+bufferSize
             gameStart = False
         font = pygame.font.Font(fontFace2, 48)
         text = font.render("Score: "+str(score), True, boardColor)
