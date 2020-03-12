@@ -207,9 +207,12 @@ boardSizeX = squareSize*width+bufferSize*(width+1)
 boardSizeY = bufferSize*(height+1)+(squareSize*height)
 squareCoord = displaySize[0]//2-boardSizeX//2+bufferSize,displaySize[1]//2-boardSizeY//2+bufferSize
 
+tool = 0
 button1Hover = False
+button2Hover = False
+button3Hover = False
 reset = False
-gameStart = False
+gameStart = True
 score = 0
 gameEnd = False
 zoom = 1
@@ -332,13 +335,13 @@ while run:
                         pygame.draw.rect(win, scheme[15][0], (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
                     if boardTemp[i,j] == -2:
                         pygame.draw.rect(win, scheme[16][0], (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
-            if not button1Hover:
+            if not button1Hover and not button2Hover and not button3Hover:
                 for i in range(32):
                     for j in range(32):
                         if pygame.mouse.get_pos()[0] >= squareCoord[0]+j*(bufferSize+squareSize) and pygame.mouse.get_pos()[0] <= squareCoord[0]+j*(bufferSize+squareSize)+squareSize:
                             if pygame.mouse.get_pos()[1] >= squareCoord[1]+i*(bufferSize+squareSize) and pygame.mouse.get_pos()[1] <= squareCoord[1]+i*(bufferSize+squareSize)+squareSize:
                                 if pygame.mouse.get_pressed()[0]:
-                                    boardTemp[i,j] = 0
+                                    boardTemp[i,j] = tool
                                 if pygame.mouse.get_pressed()[2]:
                                     boardTemp[i,j] = -1
 
@@ -362,6 +365,42 @@ while run:
             font = pygame.font.Font(fontFace2, 32)
             text = font.render("DONE", True, scheme[14][1])
             win.blit(text,(buttonPos[0]-text.get_width()//2,buttonPos[1]-text.get_height()//2))
+
+            buttonSize = 250,50
+            buttonPos = int(displaySize[0]*(1/8)),int(displaySize[1]*(3.25/8))
+            if pygame.mouse.get_pos()[0] <= buttonPos[0]+buttonSize[0]//2 and pygame.mouse.get_pos()[0] >= buttonPos[0]-buttonSize[0]//2 and pygame.mouse.get_pos()[1] <= buttonPos[1]+buttonSize[1]//2 and pygame.mouse.get_pos()[1] >= buttonPos[1]-buttonSize[1]//2:
+                buttonColor = scheme[16][0]
+                button2Hover = True
+                if pygame.mouse.get_pressed()[0] and not transition:
+                    tool = 0
+            else:
+                buttonColor = scheme[15][1]
+                button2Hover = False
+            pygame.draw.rect(win, buttonColor, (buttonPos[0]-buttonSize[0]//2,buttonPos[1]-buttonSize[1]//2,buttonSize[0],buttonSize[1]))
+            font = pygame.font.Font(fontFace2, 32)
+            text = font.render("GRID SPACE", True, scheme[14][1])
+            win.blit(text,(buttonPos[0]-text.get_width()//2+24,buttonPos[1]-text.get_height()//2))
+
+            pygame.draw.rect(win, scheme[15][0], (buttonPos[0]-buttonSize[0]//2+4,buttonPos[1]-buttonSize[1]//2+4,buttonSize[1]-8,buttonSize[1]-8))
+            pygame.draw.rect(win, scheme[15][1], (buttonPos[0]-buttonSize[0]//2+8,buttonPos[1]-buttonSize[1]//2+8,buttonSize[1]-16,buttonSize[1]-16))
+
+            buttonSize = 250,50
+            buttonPos = int(displaySize[0]*(1/8)),int(displaySize[1]*(4/8))
+            if pygame.mouse.get_pos()[0] <= buttonPos[0]+buttonSize[0]//2 and pygame.mouse.get_pos()[0] >= buttonPos[0]-buttonSize[0]//2 and pygame.mouse.get_pos()[1] <= buttonPos[1]+buttonSize[1]//2 and pygame.mouse.get_pos()[1] >= buttonPos[1]-buttonSize[1]//2:
+                buttonColor = scheme[16][0]
+                button3Hover = True
+                if pygame.mouse.get_pressed()[0] and not transition:
+                    tool = -2
+            else:
+                buttonColor = scheme[15][1]
+                button3Hover = False
+            pygame.draw.rect(win, buttonColor, (buttonPos[0]-buttonSize[0]//2,buttonPos[1]-buttonSize[1]//2,buttonSize[0],buttonSize[1]))
+            font = pygame.font.Font(fontFace2, 32)
+            text = font.render("BLOCKADE", True, scheme[14][1])
+            win.blit(text,(buttonPos[0]-text.get_width()//2+24,buttonPos[1]-text.get_height()//2))
+
+            pygame.draw.rect(win, scheme[15][0], (buttonPos[0]-buttonSize[0]//2+4,buttonPos[1]-buttonSize[1]//2+4,buttonSize[1]-8,buttonSize[1]-8))
+            pygame.draw.rect(win, scheme[16][0], (buttonPos[0]-buttonSize[0]//2+8,buttonPos[1]-buttonSize[1]//2+8,buttonSize[1]-16,buttonSize[1]-16))
 
     if not pygame.mouse.get_pressed()[0] and transition:
         transition = False
