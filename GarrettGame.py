@@ -537,12 +537,10 @@ while run:
                 buttonColor = scheme[1][1]
                 textColor = scheme[2][1]
                 if pygame.mouse.get_pressed()[0]:
-                    menu = False
                     gameEnd = False
+                    gameStart = True
                     score = 0
                     board = loadBoardCache()
-                    genRandomBlock(board)
-                    genRandomBlock(board)
             else:
                 buttonColor = scheme[2][1]
                 textColor = (255,255,255)
