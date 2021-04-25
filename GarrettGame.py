@@ -3,187 +3,195 @@ import numpy as np
 import random
 import pygame
 
+
 def genRandomBlock(board):
     zeroList = np.array([])
     for i in range(height):
         for j in range(width):
-            if board[i,j] == 0:
-                zeroList = np.append(zeroList, [i,j])
+            if board[i, j] == 0:
+                zeroList = np.append(zeroList, [i, j])
     try:
-        zeroList.shape = np.size(zeroList)//2,2
-        newBlockPos = zeroList[random.randint(0,np.size(zeroList,0)-1)]
-        board[int(newBlockPos[0]),int(newBlockPos[1])] = int(1+random.randint(6,10)/10)
+        zeroList.shape = np.size(zeroList)//2, 2
+        newBlockPos = zeroList[random.randint(0, np.size(zeroList, 0)-1)]
+        board[int(newBlockPos[0]), int(newBlockPos[1])
+              ] = int(1+random.randint(6, 10)/10)
     except ValueError:
         print("This should not happen, attempted to place random block in board with no zeros?")
 
     return zeroList
 
+
 def move(direction, board):
     global gameEnd
     global score
     preboard = np.array(board)
-    if direction == 0: #UP
-        xRange = np.arange(0,width)
+    if direction == 0:  # UP
+        xRange = np.arange(0, width)
         for x in xRange:
-            lastNumber = board[0,x]
+            lastNumber = board[0, x]
             lastNumIndex = 0
-            yRange = np.arange(1,height)
+            yRange = np.arange(1, height)
             for y in yRange:
-                if board[y,x] != 0 and board[y,x] != -1 and board[y,x] != -2:
+                if board[y, x] != 0 and board[y, x] != -1 and board[y, x] != -2:
                     if lastNumber == 0:
-                        board[lastNumIndex,x] = board[y,x]
-                        board[y,x] = 0
-                        lastNumber = board[lastNumIndex,x]
-                    elif lastNumber == board[y,x]:
-                        board[lastNumIndex,x] = lastNumber+1
-                        board[y,x] = 0
-                        score += 2**(board[lastNumIndex,x])
-                        lastNumIndex +=1
-                        lastNumber = board[lastNumIndex,x]
+                        board[lastNumIndex, x] = board[y, x]
+                        board[y, x] = 0
+                        lastNumber = board[lastNumIndex, x]
+                    elif lastNumber == board[y, x]:
+                        board[lastNumIndex, x] = lastNumber+1
+                        board[y, x] = 0
+                        score += 2**(board[lastNumIndex, x])
+                        lastNumIndex += 1
+                        lastNumber = board[lastNumIndex, x]
                     else:
-                        if  lastNumIndex+1 < y:
-                            board[lastNumIndex+1,x] = board[y,x]
-                            board[y,x] = 0
-                        lastNumIndex +=1
-                        lastNumber = board[lastNumIndex,x]
-                elif board[y,x] == -2 or board[y,x] == -1:
+                        if lastNumIndex+1 < y:
+                            board[lastNumIndex+1, x] = board[y, x]
+                            board[y, x] = 0
+                        lastNumIndex += 1
+                        lastNumber = board[lastNumIndex, x]
+                elif board[y, x] == -2 or board[y, x] == -1:
                     lastNumIndex = y
-                    lastNumber = board[lastNumIndex,x]
-    if direction == 1: #DOWN
-        xRange = np.arange(0,width)
+                    lastNumber = board[lastNumIndex, x]
+    if direction == 1:  # DOWN
+        xRange = np.arange(0, width)
         for x in xRange:
-            lastNumber = board[height-1,x]
+            lastNumber = board[height-1, x]
             lastNumIndex = height-1
-            yRange = np.arange(height-2,-1,-1)
+            yRange = np.arange(height-2, -1, -1)
             for y in yRange:
-                if board[y,x] != 0 and board[y,x] != -1 and board[y,x] != -2:
+                if board[y, x] != 0 and board[y, x] != -1 and board[y, x] != -2:
                     if lastNumber == 0:
-                        board[lastNumIndex,x] = board[y,x]
-                        board[y,x] = 0
-                        lastNumber = board[lastNumIndex,x]
-                    elif lastNumber == board[y,x]:
-                        board[lastNumIndex,x] = board[y,x]+1
-                        board[y,x] = 0
-                        score += 2**(board[lastNumIndex,x])
-                        lastNumIndex -=1
-                        lastNumber = board[lastNumIndex,x]
+                        board[lastNumIndex, x] = board[y, x]
+                        board[y, x] = 0
+                        lastNumber = board[lastNumIndex, x]
+                    elif lastNumber == board[y, x]:
+                        board[lastNumIndex, x] = board[y, x]+1
+                        board[y, x] = 0
+                        score += 2**(board[lastNumIndex, x])
+                        lastNumIndex -= 1
+                        lastNumber = board[lastNumIndex, x]
                     else:
                         if lastNumIndex-1 > y:
-                            board[lastNumIndex-1,x] = board[y,x]
-                            board[y,x] = 0
-                        lastNumIndex -=1
-                        lastNumber = board[lastNumIndex,x]
-                elif board[y,x] == -2 or board[y,x] == -1:
+                            board[lastNumIndex-1, x] = board[y, x]
+                            board[y, x] = 0
+                        lastNumIndex -= 1
+                        lastNumber = board[lastNumIndex, x]
+                elif board[y, x] == -2 or board[y, x] == -1:
                     lastNumIndex = y
-                    lastNumber = board[lastNumIndex,x]
-    if direction == 2: #LEFT
-        yRange = np.arange(0,height)
+                    lastNumber = board[lastNumIndex, x]
+    if direction == 2:  # LEFT
+        yRange = np.arange(0, height)
         for y in yRange:
-            lastNumber = board[y,0]
+            lastNumber = board[y, 0]
             lastNumIndex = 0
-            xRange = np.arange(1,width)
+            xRange = np.arange(1, width)
             for x in xRange:
-                if board[y,x] != 0 and board[y,x] != -1 and board[y,x] != -2:
+                if board[y, x] != 0 and board[y, x] != -1 and board[y, x] != -2:
                     if lastNumber == 0:
-                        board[y,lastNumIndex] = board[y,x]
-                        board[y,x] = 0
-                        lastNumber = board[y,lastNumIndex]
-                    elif lastNumber == board[y,x]:
-                        board[y,lastNumIndex] = lastNumber+1
-                        board[y,x] = 0
-                        score += 2**(board[y,lastNumIndex])
-                        lastNumIndex +=1
-                        lastNumber = board[y,lastNumIndex]
+                        board[y, lastNumIndex] = board[y, x]
+                        board[y, x] = 0
+                        lastNumber = board[y, lastNumIndex]
+                    elif lastNumber == board[y, x]:
+                        board[y, lastNumIndex] = lastNumber+1
+                        board[y, x] = 0
+                        score += 2**(board[y, lastNumIndex])
+                        lastNumIndex += 1
+                        lastNumber = board[y, lastNumIndex]
                     else:
-                        if  lastNumIndex+1 < x:
-                            board[y,lastNumIndex+1] = board[y,x]
-                            board[y,x] = 0
-                        lastNumIndex +=1
-                        lastNumber = board[y,lastNumIndex]
-                elif board[y,x] == -2 or board[y,x] == -1:
+                        if lastNumIndex+1 < x:
+                            board[y, lastNumIndex+1] = board[y, x]
+                            board[y, x] = 0
+                        lastNumIndex += 1
+                        lastNumber = board[y, lastNumIndex]
+                elif board[y, x] == -2 or board[y, x] == -1:
                     lastNumIndex = x
-                    lastNumber = board[y,lastNumIndex]
-    if direction == 3: #RIGHT
-        yRange = np.arange(0,height)
+                    lastNumber = board[y, lastNumIndex]
+    if direction == 3:  # RIGHT
+        yRange = np.arange(0, height)
         for y in yRange:
-            lastNumber = board[y,width-1]
+            lastNumber = board[y, width-1]
             lastNumIndex = width-1
-            xRange = np.arange(width-2,-1,-1)
+            xRange = np.arange(width-2, -1, -1)
             for x in xRange:
-                if board[y,x] != 0 and board[y,x] != -1 and board[y,x] != -2:
+                if board[y, x] != 0 and board[y, x] != -1 and board[y, x] != -2:
                     if lastNumber == 0:
-                        board[y,lastNumIndex] = board[y,x]
-                        board[y,x] = 0
-                        lastNumber = board[y,lastNumIndex]
-                    elif lastNumber == board[y,x]:
-                        board[y,lastNumIndex] = lastNumber+1
-                        board[y,x] = 0
-                        score += 2**(board[y,lastNumIndex])
-                        lastNumIndex -=1
-                        lastNumber = board[y,lastNumIndex]
+                        board[y, lastNumIndex] = board[y, x]
+                        board[y, x] = 0
+                        lastNumber = board[y, lastNumIndex]
+                    elif lastNumber == board[y, x]:
+                        board[y, lastNumIndex] = lastNumber+1
+                        board[y, x] = 0
+                        score += 2**(board[y, lastNumIndex])
+                        lastNumIndex -= 1
+                        lastNumber = board[y, lastNumIndex]
                     else:
-                        if  lastNumIndex-1 > x:
-                            board[y,lastNumIndex-1] = board[y,x]
-                            board[y,x] = 0
-                        lastNumIndex -=1
-                        lastNumber = board[y,lastNumIndex]
-                elif board[y,x] == -2 or board[y,x] == -1:
+                        if lastNumIndex-1 > x:
+                            board[y, lastNumIndex-1] = board[y, x]
+                            board[y, x] = 0
+                        lastNumIndex -= 1
+                        lastNumber = board[y, lastNumIndex]
+                elif board[y, x] == -2 or board[y, x] == -1:
                     lastNumIndex = x
-                    lastNumber = board[y,lastNumIndex]
+                    lastNumber = board[y, lastNumIndex]
 
-    if not np.array_equal(preboard,board):
+    if not np.array_equal(preboard, board):
         zeroList = genRandomBlock(board)
         # print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
         # print(board)
         # print("Score: {0}".format(score))
-        if np.size(zeroList,0) <= 1:
+        if np.size(zeroList, 0) <= 1:
             gameTest = True
-            for y in range(0,height):
-                for x in range(0,width):
-                    if board[y,x] != -1 and board[y,x] != -2:
+            for y in range(0, height):
+                for x in range(0, width):
+                    if board[y, x] != -1 and board[y, x] != -2:
                         if x != width-1:
-                            if board[y,x] == board[y,x+1]:
+                            if board[y, x] == board[y, x+1]:
                                 gameTest = False
                         if y != height-1:
-                            if board[y,x] == board[y+1,x]:
+                            if board[y, x] == board[y+1, x]:
                                 gameTest = False
             if gameTest:
                 gameEnd = True
+
 
 def loadBoardCache():
     try:
         return np.load("boardCache.npy")
     except:
         print("Unable to load \"boardCache.npy\". Loading defaults...")
-        return np.zeros((32,32),int)-1
+        return np.zeros((32, 32), int)-1
+
 
 board = loadBoardCache()
 
-width = np.size(board,1)
+width = np.size(board, 1)
 height = np.size(board, 0)
 
 pygame.init()
 
-win = pygame.display.set_mode(size=(1280,720),flags=pygame.RESIZABLE)
+win = pygame.display.set_mode(size=(1280, 720), flags=pygame.RESIZABLE)
 pygame.display.set_caption("2048")
 
-defaultScheme = np.array([["Roboto-Bold.ttf","Roboto-Bold.ttf"],               # Font 1 and 2
-                          [(187,173,160),(205,193,179)],     # Board color and square color
-                          [(238,228,218),(54, 53, 55)],      # 2 tile block color and text color
-                          [(236,224,202),(54, 53, 55)],      # 4 tile block color and text color
-                          [(243,176,123),(253, 253, 255)],   # etc...
-                          [(245,149,99),(253, 253, 255)],
-                          [(239,128,94),(253, 253, 255)],
-                          [(247,93,57),(253, 253, 255)],
-                          [(236,207,113),(253, 253, 255)],
-                          [(168,227,20),(253, 253, 255)],
-                          [(43,168,74),(253, 253, 255)],
-                          [(15,139,141),(253, 253, 255)],
-                          [(41,50,65),(253, 253, 255)],
-                          [(4,15,15),(253, 253, 255)],
-                          [(255,255,255),(10,10,10)],
-                          [(20,20,20),(255,255,255)],
-                          [(255,255,0),(255,0,0)]])
+defaultScheme = np.array([["Roboto-Bold.ttf", "Roboto-Bold.ttf"],               # Font 1 and 2
+                          # Board color and square color
+                          [(187, 173, 160), (205, 193, 179)],
+                          # 2 tile block color and text color
+                          [(238, 228, 218), (54, 53, 55)],
+                          # 4 tile block color and text color
+                          [(236, 224, 202), (54, 53, 55)],
+                          [(243, 176, 123), (253, 253, 255)],   # etc...
+                          [(245, 149, 99), (253, 253, 255)],
+                          [(239, 128, 94), (253, 253, 255)],
+                          [(247, 93, 57), (253, 253, 255)],
+                          [(236, 207, 113), (253, 253, 255)],
+                          [(168, 227, 20), (253, 253, 255)],
+                          [(43, 168, 74), (253, 253, 255)],
+                          [(15, 139, 141), (253, 253, 255)],
+                          [(41, 50, 65), (253, 253, 255)],
+                          [(4, 15, 15), (253, 253, 255)],
+                          [(255, 255, 255), (10, 10, 10)],
+                          [(20, 20, 20), (255, 255, 255)],
+                          [(255, 255, 0), (255, 0, 0)]])
 
 schemeList = np.array([defaultScheme])
 
@@ -197,15 +205,17 @@ squareColor = scheme[1][1]
 
 backgroundColor = scheme[14][0]
 
-win = pygame.display.set_mode(size=(1280,720))
+win = pygame.display.set_mode(size=(1280, 720))
 displaySize = pygame.display.get_surface().get_size()
-boardSizeX = int((displaySize[0]**2+displaySize[1]**2)**(1/2)*(width/height)//2.5)
+boardSizeX = int((displaySize[0]**2+displaySize[1]
+                  ** 2)**(1/2)*(width/height)//2.5)
 bufferSize = boardSizeX//width//12
 boardSizeX = boardSizeX-bufferSize
 squareSize = (boardSizeX-(bufferSize*(width+1)))//width
 boardSizeX = squareSize*width+bufferSize*(width+1)
 boardSizeY = bufferSize*(height+1)+(squareSize*height)
-squareCoord = displaySize[0]//2-boardSizeX//2+bufferSize,displaySize[1]//2-boardSizeY//2+bufferSize
+squareCoord = displaySize[0]//2-boardSizeX//2 + \
+    bufferSize, displaySize[1]//2-boardSizeY//2+bufferSize
 
 tool = 0
 button1Hover = False
@@ -216,7 +226,7 @@ gameStart = True
 score = 0
 gameEnd = False
 zoom = 1
-mouseMove = 0,0
+mouseMove = 0, 0
 menu = True
 mainMenu = True
 playMenu = False
@@ -229,27 +239,32 @@ while run:
         if event.type == pygame.QUIT:
             run = False
         if event.type == pygame.VIDEORESIZE:
-            win = pygame.display.set_mode(size=(event.w,event.h),flags=pygame.RESIZABLE)
+            win = pygame.display.set_mode(
+                size=(event.w, event.h), flags=pygame.RESIZABLE)
             displaySize = pygame.display.get_surface().get_size()
-            boardSizeX = int((displaySize[0]**2+displaySize[1]**2)**(1/2)*(width/height)//2.5)
+            boardSizeX = int(
+                (displaySize[0]**2+displaySize[1]**2)**(1/2)*(width/height)//2.5)
             bufferSize = boardSizeX//width//12
             boardSizeX = boardSizeX-bufferSize
             squareSize = (boardSizeX-(bufferSize*(width+1)))//width
             boardSizeX = squareSize*width+bufferSize*(width+1)
             boardSizeY = bufferSize*(height+1)+(squareSize*height)
-            squareCoord = displaySize[0]//2-boardSizeX//2+bufferSize,displaySize[1]//2-boardSizeY//2+bufferSize
+            squareCoord = displaySize[0]//2-boardSizeX//2 + \
+                bufferSize, displaySize[1]//2-boardSizeY//2+bufferSize
         if event.type == pygame.MOUSEBUTTONDOWN and not gameEnd:
             if event.button == 4:
                 zoom = 2
                 # squareCoord = int(zoom*squareCoord[0])-pygame.mouse.get_pos()[0],int(zoom*squareCoord[1])-pygame.mouse.get_pos()[1]
-                squareCoord = int(zoom*squareCoord[0])-displaySize[0]//2,int(zoom*squareCoord[1])-displaySize[1]//2
+                squareCoord = int(
+                    zoom*squareCoord[0])-displaySize[0]//2, int(zoom*squareCoord[1])-displaySize[1]//2
                 boardSizeX = boardSizeX*zoom
                 squareSize = squareSize*zoom
                 bufferSize = bufferSize*zoom
             if event.button == 5:
                 zoom = .5
                 # squareCoord = int(zoom*squareCoord[0])+pygame.mouse.get_pos()[0]//2,int(zoom*squareCoord[1])+pygame.mouse.get_pos()[1]//2
-                squareCoord = int(zoom*squareCoord[0])+displaySize[0]//4,int(zoom*squareCoord[1])+displaySize[1]//4
+                squareCoord = int(
+                    zoom*squareCoord[0])+displaySize[0]//4, int(zoom*squareCoord[1])+displaySize[1]//4
                 boardSizeX = int(boardSizeX*zoom)
                 squareSize = int(squareSize*zoom)
                 bufferSize = int(bufferSize*zoom)
@@ -261,12 +276,13 @@ while run:
     if not menu or editMenu:
         mouseMove = pygame.mouse.get_rel()
         if pygame.mouse.get_pressed()[1] and not gameEnd:
-            squareCoord = squareCoord[0]+mouseMove[0],squareCoord[1]+mouseMove[1]
+            squareCoord = squareCoord[0] + \
+                mouseMove[0], squareCoord[1]+mouseMove[1]
 
     if menu:
         if mainMenu:
-            buttonSize = 100,50
-            buttonPos = displaySize[0]//2,displaySize[1]//(3/2)
+            buttonSize = 100, 50
+            buttonPos = displaySize[0]//2, displaySize[1]//(3/2)
             if pygame.mouse.get_pos()[0] <= buttonPos[0]+buttonSize[0]//2 and pygame.mouse.get_pos()[0] >= buttonPos[0]-buttonSize[0]//2 and pygame.mouse.get_pos()[1] <= buttonPos[1]+buttonSize[1]//2 and pygame.mouse.get_pos()[1] >= buttonPos[1]-buttonSize[1]//2:
                 buttonColor = scheme[1][1]
                 if pygame.mouse.get_pressed()[0] and not transition:
@@ -275,14 +291,17 @@ while run:
                     mainMenu = False
             else:
                 buttonColor = boardColor
-            pygame.draw.rect(win, buttonColor, (buttonPos[0]-buttonSize[0]//2,buttonPos[1]-buttonSize[1]//2,buttonSize[0],buttonSize[1]))
+            pygame.draw.rect(
+                win, buttonColor, (buttonPos[0]-buttonSize[0]//2, buttonPos[1]-buttonSize[1]//2, buttonSize[0], buttonSize[1]))
             font = pygame.font.Font(fontFace2, 32)
             text = font.render("PLAY", True, scheme[2][1])
-            win.blit(text,(buttonPos[0]-text.get_width()//2,buttonPos[1]-text.get_height()//2))
+            win.blit(text, (buttonPos[0]-text.get_width() //
+                            2, buttonPos[1]-text.get_height()//2))
 
             font = pygame.font.Font(fontFace2, 60)
             text = font.render("SUPER 2048", True, scheme[2][1])
-            win.blit(text,(displaySize[0]//2-text.get_width()//2,displaySize[1]//(3)-text.get_height()//2))
+            win.blit(text, (displaySize[0]//2-text.get_width() //
+                            2, displaySize[1]//(3)-text.get_height()//2))
 
         if playMenu:
             backgroundColor = scheme[14][0]
@@ -290,8 +309,8 @@ while run:
                 mainMenu = True
                 playMenu = False
 
-            buttonSize = 120,50
-            buttonPos = displaySize[0]//2,displaySize[1]//(3/2)
+            buttonSize = 120, 50
+            buttonPos = displaySize[0]//2, displaySize[1]//(3/2)
             if pygame.mouse.get_pos()[0] <= buttonPos[0]+buttonSize[0]//2 and pygame.mouse.get_pos()[0] >= buttonPos[0]-buttonSize[0]//2 and pygame.mouse.get_pos()[1] <= buttonPos[1]+buttonSize[1]//2 and pygame.mouse.get_pos()[1] >= buttonPos[1]-buttonSize[1]//2:
                 buttonColor = scheme[1][1]
                 if pygame.mouse.get_pressed()[0] and not transition:
@@ -303,13 +322,15 @@ while run:
                         reset = False
             else:
                 buttonColor = boardColor
-            pygame.draw.rect(win, buttonColor, (buttonPos[0]-buttonSize[0]//2,buttonPos[1]-buttonSize[1]//2,buttonSize[0],buttonSize[1]))
+            pygame.draw.rect(
+                win, buttonColor, (buttonPos[0]-buttonSize[0]//2, buttonPos[1]-buttonSize[1]//2, buttonSize[0], buttonSize[1]))
             font = pygame.font.Font(fontFace2, 32)
             text = font.render("START", True, scheme[2][1])
-            win.blit(text,(buttonPos[0]-text.get_width()//2,buttonPos[1]-text.get_height()//2))
+            win.blit(text, (buttonPos[0]-text.get_width() //
+                            2, buttonPos[1]-text.get_height()//2))
 
-            buttonSize = 200,50
-            buttonPos = displaySize[0]//2,displaySize[1]//2
+            buttonSize = 200, 50
+            buttonPos = displaySize[0]//2, displaySize[1]//2
             if pygame.mouse.get_pos()[0] <= buttonPos[0]+buttonSize[0]//2 and pygame.mouse.get_pos()[0] >= buttonPos[0]-buttonSize[0]//2 and pygame.mouse.get_pos()[1] <= buttonPos[1]+buttonSize[1]//2 and pygame.mouse.get_pos()[1] >= buttonPos[1]-buttonSize[1]//2:
                 buttonColor = scheme[1][1]
                 if pygame.mouse.get_pressed()[0] and not transition:
@@ -318,54 +339,63 @@ while run:
                     playMenu = False
             else:
                 buttonColor = boardColor
-            pygame.draw.rect(win, buttonColor, (buttonPos[0]-buttonSize[0]//2,buttonPos[1]-buttonSize[1]//2,buttonSize[0],buttonSize[1]))
+            pygame.draw.rect(
+                win, buttonColor, (buttonPos[0]-buttonSize[0]//2, buttonPos[1]-buttonSize[1]//2, buttonSize[0], buttonSize[1]))
             font = pygame.font.Font(fontFace2, 32)
             text = font.render("EDIT BOARD", True, scheme[2][1])
-            win.blit(text,(buttonPos[0]-text.get_width()//2,buttonPos[1]-text.get_height()//2))
+            win.blit(text, (buttonPos[0]-text.get_width() //
+                            2, buttonPos[1]-text.get_height()//2))
 
         if editMenu:
             if transition:
                 boardTemp = loadBoardCache()
                 tool = 0
-                width = np.size(boardTemp,1)
+                width = np.size(boardTemp, 1)
                 height = np.size(boardTemp, 0)
                 displaySize = pygame.display.get_surface().get_size()
-                boardSizeX = int((displaySize[0]**2+displaySize[1]**2)**(1/2)*(width/height)//2.5)
+                boardSizeX = int(
+                    (displaySize[0]**2+displaySize[1]**2)**(1/2)*(width/height)//2.5)
                 bufferSize = boardSizeX//width//12
                 boardSizeX = boardSizeX-bufferSize
                 squareSize = (boardSizeX-(bufferSize*(width+1)))//width
                 boardSizeX = squareSize*width+bufferSize*(width+1)
                 boardSizeY = bufferSize*(height+1)+(squareSize*height)
-                squareCoord = displaySize[0]//2-boardSizeX//2+bufferSize,displaySize[1]//2-boardSizeY//2+bufferSize
+                squareCoord = displaySize[0]//2-boardSizeX//2 + \
+                    bufferSize, displaySize[1]//2-boardSizeY//2+bufferSize
             backgroundColor = scheme[14][1]
-            pygame.draw.line(win,scheme[14][0],(squareCoord[0]+(squareSize+bufferSize)*np.size(boardTemp,1)//2-bufferSize//2-1,squareCoord[1]+(squareSize+bufferSize)*np.size(boardTemp,0)),(squareCoord[0]+(squareSize+bufferSize)*np.size(boardTemp,1)//2-bufferSize//2-1,squareCoord[1]),bufferSize//2)
-            pygame.draw.line(win,scheme[14][0],(squareCoord[0],squareCoord[1]+(squareSize+bufferSize)*np.size(boardTemp,0)//2-bufferSize//2-1),(squareCoord[0]+(squareSize+bufferSize)*np.size(boardTemp,1),squareCoord[1]+(squareSize+bufferSize)*np.size(boardTemp,0)//2-bufferSize//2-1),bufferSize//2)
+            pygame.draw.line(win, scheme[14][0], (squareCoord[0]+(squareSize+bufferSize)*np.size(boardTemp, 1)//2-bufferSize//2-1, squareCoord[1]+(
+                squareSize+bufferSize)*np.size(boardTemp, 0)), (squareCoord[0]+(squareSize+bufferSize)*np.size(boardTemp, 1)//2-bufferSize//2-1, squareCoord[1]), bufferSize//2)
+            pygame.draw.line(win, scheme[14][0], (squareCoord[0], squareCoord[1]+(squareSize+bufferSize)*np.size(boardTemp, 0)//2-bufferSize//2-1), (squareCoord[0]+(
+                squareSize+bufferSize)*np.size(boardTemp, 1), squareCoord[1]+(squareSize+bufferSize)*np.size(boardTemp, 0)//2-bufferSize//2-1), bufferSize//2)
             for i in range(32):
                 for j in range(32):
-                    if boardTemp[i,j] == 0:
-                        pygame.draw.rect(win, scheme[15][1], (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
-                    if boardTemp[i,j] == -1:
-                        pygame.draw.rect(win, scheme[15][0], (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
-                    if boardTemp[i,j] == -2:
-                        pygame.draw.rect(win, scheme[16][0], (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
+                    if boardTemp[i, j] == 0:
+                        pygame.draw.rect(win, scheme[15][1], (squareCoord[0]+j*(
+                            bufferSize+squareSize), squareCoord[1]+i*(bufferSize+squareSize), squareSize, squareSize))
+                    if boardTemp[i, j] == -1:
+                        pygame.draw.rect(win, scheme[15][0], (squareCoord[0]+j*(
+                            bufferSize+squareSize), squareCoord[1]+i*(bufferSize+squareSize), squareSize, squareSize))
+                    if boardTemp[i, j] == -2:
+                        pygame.draw.rect(win, scheme[16][0], (squareCoord[0]+j*(
+                            bufferSize+squareSize), squareCoord[1]+i*(bufferSize+squareSize), squareSize, squareSize))
             if not button1Hover and not button2Hover and not button3Hover:
                 for i in range(32):
                     for j in range(32):
                         if pygame.mouse.get_pos()[0] >= squareCoord[0]+j*(bufferSize+squareSize) and pygame.mouse.get_pos()[0] <= squareCoord[0]+j*(bufferSize+squareSize)+squareSize:
                             if pygame.mouse.get_pos()[1] >= squareCoord[1]+i*(bufferSize+squareSize) and pygame.mouse.get_pos()[1] <= squareCoord[1]+i*(bufferSize+squareSize)+squareSize:
                                 if pygame.mouse.get_pressed()[0]:
-                                    boardTemp[i,j] = tool
+                                    boardTemp[i, j] = tool
                                 if pygame.mouse.get_pressed()[2]:
-                                    boardTemp[i,j] = -1
+                                    boardTemp[i, j] = -1
 
-            buttonSize = 100,50
-            buttonPos = int(displaySize[0]*(7/8)),int(displaySize[1]*(7/8))
+            buttonSize = 100, 50
+            buttonPos = int(displaySize[0]*(7/8)), int(displaySize[1]*(7/8))
             if pygame.mouse.get_pos()[0] <= buttonPos[0]+buttonSize[0]//2 and pygame.mouse.get_pos()[0] >= buttonPos[0]-buttonSize[0]//2 and pygame.mouse.get_pos()[1] <= buttonPos[1]+buttonSize[1]//2 and pygame.mouse.get_pos()[1] >= buttonPos[1]-buttonSize[1]//2:
                 buttonColor = scheme[16][0]
                 button1Hover = True
                 if pygame.mouse.get_pressed()[0] and not transition:
                     transition = True
-                    np.save("boardCache.npy",boardTemp)
+                    np.save("boardCache.npy", boardTemp)
                     board = boardTemp
                     win.fill(backgroundColor)
                     playMenu = True
@@ -374,13 +404,15 @@ while run:
             else:
                 buttonColor = scheme[15][1]
                 button1Hover = False
-            pygame.draw.rect(win, buttonColor, (buttonPos[0]-buttonSize[0]//2,buttonPos[1]-buttonSize[1]//2,buttonSize[0],buttonSize[1]))
+            pygame.draw.rect(
+                win, buttonColor, (buttonPos[0]-buttonSize[0]//2, buttonPos[1]-buttonSize[1]//2, buttonSize[0], buttonSize[1]))
             font = pygame.font.Font(fontFace2, 32)
             text = font.render("DONE", True, scheme[14][1])
-            win.blit(text,(buttonPos[0]-text.get_width()//2,buttonPos[1]-text.get_height()//2))
+            win.blit(text, (buttonPos[0]-text.get_width() //
+                            2, buttonPos[1]-text.get_height()//2))
 
-            buttonSize = 250,50
-            buttonPos = int(displaySize[0]*(1/8)),int(displaySize[1]*(3.25/8))
+            buttonSize = 250, 50
+            buttonPos = int(displaySize[0]*(1/8)), int(displaySize[1]*(3.25/8))
             if pygame.mouse.get_pos()[0] <= buttonPos[0]+buttonSize[0]//2 and pygame.mouse.get_pos()[0] >= buttonPos[0]-buttonSize[0]//2 and pygame.mouse.get_pos()[1] <= buttonPos[1]+buttonSize[1]//2 and pygame.mouse.get_pos()[1] >= buttonPos[1]-buttonSize[1]//2:
                 buttonColor = scheme[16][0]
                 button2Hover = True
@@ -389,16 +421,20 @@ while run:
             else:
                 buttonColor = scheme[15][1]
                 button2Hover = False
-            pygame.draw.rect(win, buttonColor, (buttonPos[0]-buttonSize[0]//2,buttonPos[1]-buttonSize[1]//2,buttonSize[0],buttonSize[1]))
+            pygame.draw.rect(
+                win, buttonColor, (buttonPos[0]-buttonSize[0]//2, buttonPos[1]-buttonSize[1]//2, buttonSize[0], buttonSize[1]))
             font = pygame.font.Font(fontFace2, 32)
             text = font.render("GRID SPACE", True, scheme[14][1])
-            win.blit(text,(buttonPos[0]-text.get_width()//2+24,buttonPos[1]-text.get_height()//2))
+            win.blit(text, (buttonPos[0]-text.get_width() //
+                            2+24, buttonPos[1]-text.get_height()//2))
 
-            pygame.draw.rect(win, scheme[15][0], (buttonPos[0]-buttonSize[0]//2+4,buttonPos[1]-buttonSize[1]//2+4,buttonSize[1]-8,buttonSize[1]-8))
-            pygame.draw.rect(win, scheme[15][1], (buttonPos[0]-buttonSize[0]//2+8,buttonPos[1]-buttonSize[1]//2+8,buttonSize[1]-16,buttonSize[1]-16))
+            pygame.draw.rect(win, scheme[15][0], (buttonPos[0]-buttonSize[0]//2+4,
+                                                  buttonPos[1]-buttonSize[1]//2+4, buttonSize[1]-8, buttonSize[1]-8))
+            pygame.draw.rect(win, scheme[15][1], (buttonPos[0]-buttonSize[0]//2+8,
+                                                  buttonPos[1]-buttonSize[1]//2+8, buttonSize[1]-16, buttonSize[1]-16))
 
-            buttonSize = 250,50
-            buttonPos = int(displaySize[0]*(1/8)),int(displaySize[1]*(4/8))
+            buttonSize = 250, 50
+            buttonPos = int(displaySize[0]*(1/8)), int(displaySize[1]*(4/8))
             if pygame.mouse.get_pos()[0] <= buttonPos[0]+buttonSize[0]//2 and pygame.mouse.get_pos()[0] >= buttonPos[0]-buttonSize[0]//2 and pygame.mouse.get_pos()[1] <= buttonPos[1]+buttonSize[1]//2 and pygame.mouse.get_pos()[1] >= buttonPos[1]-buttonSize[1]//2:
                 buttonColor = scheme[16][0]
                 button3Hover = True
@@ -407,13 +443,17 @@ while run:
             else:
                 buttonColor = scheme[15][1]
                 button3Hover = False
-            pygame.draw.rect(win, buttonColor, (buttonPos[0]-buttonSize[0]//2,buttonPos[1]-buttonSize[1]//2,buttonSize[0],buttonSize[1]))
+            pygame.draw.rect(
+                win, buttonColor, (buttonPos[0]-buttonSize[0]//2, buttonPos[1]-buttonSize[1]//2, buttonSize[0], buttonSize[1]))
             font = pygame.font.Font(fontFace2, 32)
             text = font.render("BLOCKADE", True, scheme[14][1])
-            win.blit(text,(buttonPos[0]-text.get_width()//2+24,buttonPos[1]-text.get_height()//2))
+            win.blit(text, (buttonPos[0]-text.get_width() //
+                            2+24, buttonPos[1]-text.get_height()//2))
 
-            pygame.draw.rect(win, scheme[15][0], (buttonPos[0]-buttonSize[0]//2+4,buttonPos[1]-buttonSize[1]//2+4,buttonSize[1]-8,buttonSize[1]-8))
-            pygame.draw.rect(win, scheme[16][0], (buttonPos[0]-buttonSize[0]//2+8,buttonPos[1]-buttonSize[1]//2+8,buttonSize[1]-16,buttonSize[1]-16))
+            pygame.draw.rect(win, scheme[15][0], (buttonPos[0]-buttonSize[0]//2+4,
+                                                  buttonPos[1]-buttonSize[1]//2+4, buttonSize[1]-8, buttonSize[1]-8))
+            pygame.draw.rect(win, scheme[16][0], (buttonPos[0]-buttonSize[0]//2+8,
+                                                  buttonPos[1]-buttonSize[1]//2+8, buttonSize[1]-16, buttonSize[1]-16))
 
     if not pygame.mouse.get_pressed()[0] and transition:
         transition = False
@@ -422,35 +462,38 @@ while run:
         if transition and gameStart:
             score = 0
             gameEnd = False
-            for i in range(np.size(board,0)):
+            for i in range(np.size(board, 0)):
                 if 0 in board[i]:
                     break
-            for j in range(np.size(board,0)):
-                if 0 in board[0:np.size(board,0),j]:
+            for j in range(np.size(board, 0)):
+                if 0 in board[0:np.size(board, 0), j]:
                     break
-            for k in range(np.size(board,0)-1,-1,-1):
+            for k in range(np.size(board, 0)-1, -1, -1):
                 if 0 in board[k]:
                     break
-            for l in range(np.size(board,0)-1,0,-1):
-                if 0 in board[0:np.size(board,0),l]:
+            for l in range(np.size(board, 0)-1, 0, -1):
+                if 0 in board[0:np.size(board, 0), l]:
                     break
-            board = board[i:k+1,j:l+1]
-            width = np.size(board,1)
+            board = board[i:k+1, j:l+1]
+            width = np.size(board, 1)
             height = np.size(board, 0)
             genRandomBlock(board)
             genRandomBlock(board)
             displaySize = pygame.display.get_surface().get_size()
-            boardSizeX = int((displaySize[0]**2+displaySize[1]**2)**(1/2)*(width/height)//2.5)
+            boardSizeX = int(
+                (displaySize[0]**2+displaySize[1]**2)**(1/2)*(width/height)//2.5)
             bufferSize = boardSizeX//width//12
             boardSizeX = boardSizeX-bufferSize
             squareSize = (boardSizeX-(bufferSize*(width+1)))//width
             boardSizeX = squareSize*width+bufferSize*(width+1)
             boardSizeY = bufferSize*(height+1)+(squareSize*height)
-            squareCoord = displaySize[0]//2-boardSizeX//2+bufferSize,displaySize[1]//2-boardSizeY//2+bufferSize
+            squareCoord = displaySize[0]//2-boardSizeX//2 + \
+                bufferSize, displaySize[1]//2-boardSizeY//2+bufferSize
             gameStart = False
         font = pygame.font.Font(fontFace2, 48)
         text = font.render("Score: "+str(score), True, boardColor)
-        win.blit(text,(squareCoord[0]-bufferSize,squareCoord[1]-bufferSize-text.get_height()))
+        win.blit(text, (squareCoord[0]-bufferSize,
+                        squareCoord[1]-bufferSize-text.get_height()))
 
         if not keys[pygame.K_UP]:
             upKey = False
@@ -486,53 +529,62 @@ while run:
 
         for i in range(height):
             for j in range(width):
-                if board[i,j] != -1:
-                    pygame.draw.rect(win, boardColor, (squareCoord[0]-bufferSize+j*(bufferSize+squareSize),squareCoord[1]-bufferSize+i*(bufferSize+squareSize),bufferSize*2+squareSize,bufferSize*2+squareSize))
+                if board[i, j] != -1:
+                    pygame.draw.rect(win, boardColor, (squareCoord[0]-bufferSize+j*(bufferSize+squareSize), squareCoord[1]-bufferSize+i*(
+                        bufferSize+squareSize), bufferSize*2+squareSize, bufferSize*2+squareSize))
 
         for i in range(height):
             for j in range(width):
-                if board[i,j] != -1 and board[i,j] != -2:
+                if board[i, j] != -1 and board[i, j] != -2:
                     blockColor = squareColor
-                if board[i,j] == -1:
-                    blockColor = (255,255,255)
-                if board[i,j] == -2:
+                if board[i, j] == -1:
+                    blockColor = (255, 255, 255)
+                if board[i, j] == -2:
                     blockColor = scheme[2][1]
-                pygame.draw.rect(win, blockColor, (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
+                pygame.draw.rect(win, blockColor, (squareCoord[0]+j*(
+                    bufferSize+squareSize), squareCoord[1]+i*(bufferSize+squareSize), squareSize, squareSize))
 
         for i in range(height):
             for j in range(width):
-                if board[i,j] != 0 and board[i,j] != -1 and board[i,j] != -2:
-                    if board[i,j] <= 11:
-                        blockColor = scheme[board[i,j]+1][0]
-                        textColor = scheme[board[i,j]+1][1]
-                    if board[i,j] > 11:
+                if board[i, j] != 0 and board[i, j] != -1 and board[i, j] != -2:
+                    if board[i, j] <= 11:
+                        blockColor = scheme[board[i, j]+1][0]
+                        textColor = scheme[board[i, j]+1][1]
+                    if board[i, j] > 11:
                         blockColor = scheme[13][0]
                         textColor = scheme[13][1]
-                    pygame.draw.rect(win, blockColor, (squareCoord[0]+j*(bufferSize+squareSize),squareCoord[1]+i*(bufferSize+squareSize),squareSize,squareSize))
-                    font = pygame.font.Font(fontFace1, int(squareSize/(1+(len(str(2**board[i,j]))*.5))))
-                    text = font.render(str(2**board[i,j]), True, textColor)
-                    win.blit(text,(squareCoord[0]+j*(bufferSize+squareSize)+squareSize//2 - text.get_width() // 2, squareCoord[1]+i*(bufferSize+squareSize)+squareSize//2 - text.get_height() // 2))
+                    pygame.draw.rect(win, blockColor, (squareCoord[0]+j*(
+                        bufferSize+squareSize), squareCoord[1]+i*(bufferSize+squareSize), squareSize, squareSize))
+                    font = pygame.font.Font(fontFace1, int(
+                        squareSize/(1+(len(str(2**board[i, j]))*.5))))
+                    text = font.render(str(2**board[i, j]), True, textColor)
+                    win.blit(text, (squareCoord[0]+j*(bufferSize+squareSize)+squareSize//2 - text.get_width(
+                    ) // 2, squareCoord[1]+i*(bufferSize+squareSize)+squareSize//2 - text.get_height() // 2))
 
         if gameEnd:
             displaySize = pygame.display.get_surface().get_size()
-            boardSizeX = int((displaySize[0]**2+displaySize[1]**2)**(1/2)*(width/height)//2.5)
+            boardSizeX = int(
+                (displaySize[0]**2+displaySize[1]**2)**(1/2)*(width/height)//2.5)
             bufferSize = boardSizeX//width//12
             boardSizeX = boardSizeX-bufferSize
             squareSize = (boardSizeX-(bufferSize*(width+1)))//width
             boardSizeX = squareSize*width+bufferSize*(width+1)
             boardSizeY = bufferSize*(height+1)+(squareSize*height)
-            squareCoord = displaySize[0]//2-boardSizeX//2+bufferSize,displaySize[1]//2-boardSizeY//2+bufferSize
+            squareCoord = displaySize[0]//2-boardSizeX//2 + \
+                bufferSize, displaySize[1]//2-boardSizeY//2+bufferSize
 
-            s = pygame.Surface((boardSizeX,boardSizeY))
+            s = pygame.Surface((boardSizeX, boardSizeY))
             s.set_alpha(150)
             s.fill((boardColor))
-            win.blit(s, (squareCoord[0]-bufferSize,squareCoord[1]-bufferSize))
+            win.blit(s, (squareCoord[0]-bufferSize, squareCoord[1]-bufferSize))
             font = pygame.font.Font(fontFace2, 48)
             text = font.render("Oops! Game Over!", True, scheme[2][1])
-            win.blit(text,(displaySize[0]//2-text.get_width()//2,displaySize[1]//2-text.get_height()//(1.8/2)))
+            win.blit(text, (displaySize[0]//2-text.get_width() //
+                            2, displaySize[1]//2-text.get_height()//(1.8/2)))
 
-            buttonSize = 200,50
-            buttonPos = displaySize[0]//2+buttonSize[0]//2+20,displaySize[1]//(1.8)
+            buttonSize = 200, 50
+            buttonPos = displaySize[0]//2 + \
+                buttonSize[0]//2+20, displaySize[1]//(1.8)
             if pygame.mouse.get_pos()[0] <= buttonPos[0]+buttonSize[0]//2 and pygame.mouse.get_pos()[0] >= buttonPos[0]-buttonSize[0]//2 and pygame.mouse.get_pos()[1] <= buttonPos[1]+buttonSize[1]//2 and pygame.mouse.get_pos()[1] >= buttonPos[1]-buttonSize[1]//2:
                 buttonColor = scheme[1][1]
                 textColor = scheme[2][1]
@@ -543,14 +595,17 @@ while run:
                     board = loadBoardCache()
             else:
                 buttonColor = scheme[2][1]
-                textColor = (255,255,255)
-            pygame.draw.rect(win, buttonColor, (buttonPos[0]-buttonSize[0]//2,buttonPos[1]-buttonSize[1]//2,buttonSize[0],buttonSize[1]))
+                textColor = (255, 255, 255)
+            pygame.draw.rect(
+                win, buttonColor, (buttonPos[0]-buttonSize[0]//2, buttonPos[1]-buttonSize[1]//2, buttonSize[0], buttonSize[1]))
             font = pygame.font.Font(fontFace2, 32)
             text = font.render("PLAY AGAIN", True, textColor)
-            win.blit(text,(buttonPos[0]-text.get_width()//2,buttonPos[1]-text.get_height()//2))
+            win.blit(text, (buttonPos[0]-text.get_width() //
+                            2, buttonPos[1]-text.get_height()//2))
 
-            buttonSize = 200,50
-            buttonPos = displaySize[0]//2-buttonSize[0]//2-20,displaySize[1]//(1.8)
+            buttonSize = 200, 50
+            buttonPos = displaySize[0]//2 - \
+                buttonSize[0]//2-20, displaySize[1]//(1.8)
             if pygame.mouse.get_pos()[0] <= buttonPos[0]+buttonSize[0]//2 and pygame.mouse.get_pos()[0] >= buttonPos[0]-buttonSize[0]//2 and pygame.mouse.get_pos()[1] <= buttonPos[1]+buttonSize[1]//2 and pygame.mouse.get_pos()[1] >= buttonPos[1]-buttonSize[1]//2:
                 buttonColor = scheme[1][1]
                 textColor = scheme[2][1]
@@ -560,11 +615,13 @@ while run:
                     gameEnd = False
             else:
                 buttonColor = scheme[2][1]
-                textColor = (255,255,255)
-            pygame.draw.rect(win, buttonColor, (buttonPos[0]-buttonSize[0]//2,buttonPos[1]-buttonSize[1]//2,buttonSize[0],buttonSize[1]))
+                textColor = (255, 255, 255)
+            pygame.draw.rect(
+                win, buttonColor, (buttonPos[0]-buttonSize[0]//2, buttonPos[1]-buttonSize[1]//2, buttonSize[0], buttonSize[1]))
             font = pygame.font.Font(fontFace2, 32)
             text = font.render("MAIN MENU", True, textColor)
-            win.blit(text,(buttonPos[0]-text.get_width()//2,buttonPos[1]-text.get_height()//2))
+            win.blit(text, (buttonPos[0]-text.get_width() //
+                            2, buttonPos[1]-text.get_height()//2))
 
     pygame.display.update()
 
